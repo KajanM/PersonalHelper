@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
+        <AssemblyName>WindowsHelper.OrganizeFileName</AssemblyName>
+        <RootNamespace>WindowsHelper.OrganizeFileName</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

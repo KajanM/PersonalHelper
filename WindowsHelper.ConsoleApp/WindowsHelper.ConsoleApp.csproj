@@ -11,8 +11,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FileHelper\FileHelper.csproj" />
       <ProjectReference Include="..\WindowsHelper.ConsoleOptions\WindowsHelper.ConsoleOptions.csproj" />
+      <ProjectReference Include="..\WindowsHelper.OrganizeFileName\WindowsHelper.OrganizeFileName.csproj" />
     </ItemGroup>
 
     <ItemGroup>

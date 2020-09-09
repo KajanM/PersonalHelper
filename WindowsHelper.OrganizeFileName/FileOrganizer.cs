@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using WindowsHelper.ConsoleOptions;
 
-namespace FileHelper
+namespace WindowsHelper.OrganizeFileName
 {
     public class FileOrganizer
     {
