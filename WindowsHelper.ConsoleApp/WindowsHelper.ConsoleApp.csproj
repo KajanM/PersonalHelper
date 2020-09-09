@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <AssemblyName>WindowsHelper.ConsoleApp</AssemblyName>
+        <RootNamespace>WindowsHelper.ConsoleApp</RootNamespace>
+        <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+        <PublishSingleFile>true</PublishSingleFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FileHelper\FileHelper.csproj" />
+      <ProjectReference Include="..\WindowsHelper.ConsoleOptions\WindowsHelper.ConsoleOptions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    </ItemGroup>
+
+</Project>
