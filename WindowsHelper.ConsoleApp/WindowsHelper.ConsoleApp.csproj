@@ -4,7 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <Nullable>enable</Nullable>
-        <AssemblyName>WindowsHelper.ConsoleApp</AssemblyName>
+        <AssemblyName>gm-kajan</AssemblyName>
         <RootNamespace>WindowsHelper.ConsoleApp</RootNamespace>
         <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
         <PublishSingleFile>true</PublishSingleFile>
