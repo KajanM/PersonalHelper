@@ -10,9 +10,9 @@ namespace WindowsHelper.ConsoleApp
     {
         static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<AppendNumberToFilesOptions>(args)
+            Parser.Default.ParseArguments<AppendNumberToFilesOptions, object>(args)
                 .MapResult(
-                    PrependFileNamesWithNumber,
+                    (AppendNumberToFilesOptions opts) => PrependFileNamesWithNumber(opts),
                     HandleParseError);
         }
 

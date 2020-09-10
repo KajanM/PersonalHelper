@@ -2,8 +2,8 @@
 
 namespace WindowsHelper.ConsoleOptions
 {
-    [Verb("append-number")]
-    public class AppendNumberToFilesOptions : BaseOptions
+    [Verb("prepend-number", HelpText = "Prepends file name with number from parent directory")]
+    public class AppendNumberToFilesOptions
     {
         [Option('p', "path", Required = false, HelpText = "Path to perform action")]
         public string Path { get; set; }
