@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.OrganizeFileN
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.ConsoleOptions", "WindowsHelper.ConsoleOptions\WindowsHelper.ConsoleOptions.csproj", "{CC325AA2-0BB1-46CA-869F-887E0210D060}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.Tests", "WindowsHelper.Tests\WindowsHelper.Tests.csproj", "{F1A76219-3810-4F82-9A7D-02D2E9C01918}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{CC325AA2-0BB1-46CA-869F-887E0210D060}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC325AA2-0BB1-46CA-869F-887E0210D060}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC325AA2-0BB1-46CA-869F-887E0210D060}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1A76219-3810-4F82-9A7D-02D2E9C01918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1A76219-3810-4F82-9A7D-02D2E9C01918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1A76219-3810-4F82-9A7D-02D2E9C01918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1A76219-3810-4F82-9A7D-02D2E9C01918}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System;
+using CommandLine;
 
 namespace WindowsHelper.ConsoleOptions
 {
