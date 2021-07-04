@@ -12,7 +12,8 @@ namespace WindowsHelper.ConsoleApp
         {
             Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions, JoinMultipleVideosOptions,
                 MoveToParentDirectoryOptions,
-                ReplaceInvalidCharsFromFileNameOptions
+                ReplaceInvalidCharsFromFileNameOptions,
+                JoinMultipleVideosFfmpegOptions
                 >(args)
                 .MapResult(
                     (AppendNumberToFilesOptions opts) => PrependFileNamesWithNumber(opts),
@@ -20,7 +21,15 @@ namespace WindowsHelper.ConsoleApp
                     (JoinMultipleVideosOptions opts) => JoinVideos(opts),
                     (MoveToParentDirectoryOptions opts) => MoveToParentDirectory(opts),
                     (ReplaceInvalidCharsFromFileNameOptions opts) => ReplaceInvalidChars(opts),
+                    (JoinMultipleVideosFfmpegOptions opts) => JoinVideosFfmpeg(opts),
                     HandleParseError);
+        }
+
+        private static int JoinVideosFfmpeg(JoinMultipleVideosFfmpegOptions opts)
+        {
+            var joiner = new JoinMultipleVideosFfmpeg(opts);
+            joiner.Join();
+            return 1;
         }
 
         static int ReplaceInvalidChars(ReplaceInvalidCharsFromFileNameOptions opts)
