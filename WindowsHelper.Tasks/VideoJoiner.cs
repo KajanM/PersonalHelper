@@ -15,8 +15,7 @@ namespace WindowsHelper.Tasks
         public VideoJoiner(JoinMultipleVideosOptions options)
         {
             _options = options;
-            // _options.Path ??= Environment.CurrentDirectory;
-            _options.Path ??= @"G:\algo-expert\Become Algorithms Expert\02. Medium";
+            _options.Path ??= Environment.CurrentDirectory;
             
             if(!Directory.Exists(options.Path)) throw new ArgumentException($"Directory does not exist: {options.Path}");
         }
