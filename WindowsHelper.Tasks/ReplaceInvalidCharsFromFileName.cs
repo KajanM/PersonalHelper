@@ -10,7 +10,6 @@ namespace WindowsHelper.Tasks
     public class ReplaceInvalidCharsFromFileName
     {
         private readonly ReplaceInvalidCharsFromFileNameOptions _options;
-        private static readonly char[] CharsToReplace = {'.', ',', ' ', '-'};
 
         public ReplaceInvalidCharsFromFileName(ReplaceInvalidCharsFromFileNameOptions options)
         {
