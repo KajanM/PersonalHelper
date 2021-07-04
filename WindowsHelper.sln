@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.ConsoleApp", "WindowsHelper.ConsoleApp\WindowsHelper.ConsoleApp.csproj", "{F8C73C5D-9421-47B9-BF9B-1B603AA58B00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.OrganizeFileName", "WindowsHelper.OrganizeFileName\WindowsHelper.OrganizeFileName.csproj", "{0EB45AFE-A7B5-4BD0-824F-C06E6850875A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.Tasks", "WindowsHelper.Tasks\WindowsHelper.Tasks.csproj", "{0EB45AFE-A7B5-4BD0-824F-C06E6850875A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.ConsoleOptions", "WindowsHelper.ConsoleOptions\WindowsHelper.ConsoleOptions.csproj", "{CC325AA2-0BB1-46CA-869F-887E0210D060}"
 EndProject

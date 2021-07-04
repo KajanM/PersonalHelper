@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
 using CliWrap;
 
-namespace WindowsHelper.OrganizeFileName
+namespace WindowsHelper.Tasks
 {
     public class VideoJoiner
     {

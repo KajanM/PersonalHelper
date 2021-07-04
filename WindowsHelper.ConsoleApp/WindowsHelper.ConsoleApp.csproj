@@ -14,7 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WindowsHelper.ConsoleOptions\WindowsHelper.ConsoleOptions.csproj" />
-      <ProjectReference Include="..\WindowsHelper.OrganizeFileName\WindowsHelper.OrganizeFileName.csproj" />
+      <ProjectReference Include="..\WindowsHelper.Tasks\WindowsHelper.Tasks.csproj" />
     </ItemGroup>
 
     <ItemGroup>
