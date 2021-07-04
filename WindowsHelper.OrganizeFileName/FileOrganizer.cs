@@ -12,8 +12,8 @@ namespace WindowsHelper.OrganizeFileName
         public FileOrganizer(AppendNumberToFilesOptions options)
         {
             _options = options;
-            _options.Path ??= Environment.CurrentDirectory;
-            
+            // _options.Path ??= Environment.CurrentDirectory;
+            options.Path = @"H:\Linux Academy - Vim Masterclass";
             if(!Directory.Exists(options.Path)) throw new ArgumentException($"Directory does not exist: {options.Path}");
         }
 
@@ -24,7 +24,8 @@ namespace WindowsHelper.OrganizeFileName
 
         private void PrependFileNamesWithNumber(DirectoryInfo directory, bool isFirstRun = false)
         {
-            var isAbleToGetPrependNo = int.TryParse(directory.Name.Split("-")[0], out var directoryNumber);
+            var separator = directory.Name.Contains("-") ? "-" : ".";
+            var isAbleToGetPrependNo = int.TryParse(directory.Name.Split(separator)[0], out var directoryNumber);
 
             if (!isFirstRun && !isAbleToGetPrependNo)
             {
