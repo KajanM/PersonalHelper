@@ -11,15 +11,27 @@ namespace WindowsHelper.ConsoleApp
         static void Main(string[] args)
         {
             Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions, JoinMultipleVideosOptions,
-                MoveToParentDirectoryOptions>(args)
+                MoveToParentDirectoryOptions,
+                ReplaceInvalidCharsFromFileNameOptions
+                >(args)
                 .MapResult(
                     (AppendNumberToFilesOptions opts) => PrependFileNamesWithNumber(opts),
                     (ChangeSystemTimeOptions opts) => ChangeSystemTime(opts),
                     (JoinMultipleVideosOptions opts) => JoinVideos(opts),
                     (MoveToParentDirectoryOptions opts) => MoveToParentDirectory(opts),
+                    (ReplaceInvalidCharsFromFileNameOptions opts) => ReplaceInvalidChars(opts),
                     HandleParseError);
         }
 
+        static int ReplaceInvalidChars(ReplaceInvalidCharsFromFileNameOptions opts)
+        {
+            var replacer = new ReplaceInvalidCharsFromFileName(opts);
+            
+            replacer.Replace();
+
+            return 1;
+        }
+        
         static int MoveToParentDirectory(MoveToParentDirectoryOptions opts)
         {
             Console.WriteLine($"{opts.Path}");
