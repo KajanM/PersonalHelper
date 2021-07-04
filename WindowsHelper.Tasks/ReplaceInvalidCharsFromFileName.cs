@@ -25,8 +25,8 @@ namespace WindowsHelper.Tasks
 
             foreach (var file in directory.GetFiles())
             {
-                var nameWithoutExtension = file.Name.Split(file.Extension)[0];
-                var nameExcludingTheIgnoredChars = Regex.Replace(nameWithoutExtension, @"[^A-Za-z0-9]+", "-").ToLower();
+                var nameExcludingTheIgnoredChars = Regex.Replace(Path.GetFileNameWithoutExtension(file.Name), @"[^A-Za-z0-9]+", "-")
+                    .ToLower();
 
                 var newName = file.FullName.Replace(file.Name, $"{nameExcludingTheIgnoredChars}{file.Extension}");
                 if (newName == file.FullName)
