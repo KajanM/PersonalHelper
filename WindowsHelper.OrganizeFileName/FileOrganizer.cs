@@ -12,8 +12,7 @@ namespace WindowsHelper.OrganizeFileName
         public FileOrganizer(AppendNumberToFilesOptions options)
         {
             _options = options;
-            // _options.Path ??= Environment.CurrentDirectory;
-            options.Path = @"H:\Linux Academy - Vim Masterclass";
+            _options.Path ??= Environment.CurrentDirectory;
             if(!Directory.Exists(options.Path)) throw new ArgumentException($"Directory does not exist: {options.Path}");
         }
 
