@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using WindowsHelper.ConsoleOptions;
+using CliWrap;
 
 namespace WindowsHelper.Tasks
 {
@@ -24,8 +26,7 @@ namespace WindowsHelper.Tasks
             foreach (var file in directory.GetFiles())
             {
                 var nameWithoutExtension = file.Name.Split(file.Extension)[0];
-                var nameExcludingTheIgnoredChars = string.Join("_", nameWithoutExtension.Split(CharsToReplace));
-                nameExcludingTheIgnoredChars = Regex.Replace(nameExcludingTheIgnoredChars, @"_+", "_").ToLower();
+                var nameExcludingTheIgnoredChars = Regex.Replace(nameWithoutExtension, @"[^A-Za-z0-9]+", "-").ToLower();
 
                 var newName = file.FullName.Replace(file.Name, $"{nameExcludingTheIgnoredChars}{file.Extension}");
                 if (newName == file.FullName)
@@ -37,7 +38,7 @@ namespace WindowsHelper.Tasks
 
                 Console.WriteLine($"From: {file.FullName}{Environment.NewLine}To: {newName}{Environment.NewLine}");
                 if (_options.IsDryRun) continue;
-                
+
                 File.Move(file.FullName, newName);
             }
         }
