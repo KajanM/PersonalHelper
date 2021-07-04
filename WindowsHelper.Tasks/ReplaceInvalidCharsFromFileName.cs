@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Text.RegularExpressions;
 using WindowsHelper.ConsoleOptions;
-using CliWrap;
 
 namespace WindowsHelper.Tasks
 {
@@ -24,7 +22,8 @@ namespace WindowsHelper.Tasks
 
             foreach (var file in directory.GetFiles())
             {
-                var nameExcludingTheIgnoredChars = Regex.Replace(Path.GetFileNameWithoutExtension(file.Name), @"[^A-Za-z0-9]+", "-")
+                var nameExcludingTheIgnoredChars = Regex
+                    .Replace(Path.GetFileNameWithoutExtension(file.Name), @"[^A-Za-z0-9]+", "-")
                     .ToLower();
 
                 var newName = file.FullName.Replace(file.Name, $"{nameExcludingTheIgnoredChars}{file.Extension}");
