@@ -10,11 +10,22 @@ namespace WindowsHelper.ConsoleApp
     {
         static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions>(args)
+            Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions, JoinMultipleVideosOptions>(args)
                 .MapResult(
                     (AppendNumberToFilesOptions opts) => PrependFileNamesWithNumber(opts),
                     (ChangeSystemTimeOptions opts) => ChangeSystemTime(opts),
+                    (JoinMultipleVideosOptions opts) => JoinVideos(opts),
                     HandleParseError);
+        }
+
+        static int JoinVideos(JoinMultipleVideosOptions opts)
+        {
+            Console.WriteLine($"{opts.Path}");
+            var joiner = new VideoJoiner(opts);
+
+            var isSuccess = joiner.JoinVideosAsync().Result;
+
+            return isSuccess ? 1 : -1;
         }
 
         static int PrependFileNamesWithNumber(AppendNumberToFilesOptions opts)

@@ -10,4 +10,8 @@
       <ProjectReference Include="..\WindowsHelper.ConsoleOptions\WindowsHelper.ConsoleOptions.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="CliWrap" Version="3.3.2" />
+    </ItemGroup>
+
 </Project>
