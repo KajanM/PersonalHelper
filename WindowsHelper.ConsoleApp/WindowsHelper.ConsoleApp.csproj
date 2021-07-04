@@ -8,6 +8,8 @@
         <RootNamespace>WindowsHelper.ConsoleApp</RootNamespace>
         <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
         <PublishSingleFile>true</PublishSingleFile>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <OutputPath>C:\custom-scripts\</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
