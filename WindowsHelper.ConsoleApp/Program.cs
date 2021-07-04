@@ -10,14 +10,26 @@ namespace WindowsHelper.ConsoleApp
     {
         static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions, JoinMultipleVideosOptions>(args)
+            Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions, JoinMultipleVideosOptions,
+                MoveToParentDirectoryOptions>(args)
                 .MapResult(
                     (AppendNumberToFilesOptions opts) => PrependFileNamesWithNumber(opts),
                     (ChangeSystemTimeOptions opts) => ChangeSystemTime(opts),
                     (JoinMultipleVideosOptions opts) => JoinVideos(opts),
+                    (MoveToParentDirectoryOptions opts) => MoveToParentDirectory(opts),
                     HandleParseError);
         }
 
+        static int MoveToParentDirectory(MoveToParentDirectoryOptions opts)
+        {
+            Console.WriteLine($"{opts.Path}");
+
+            var mover = new MoveToParentDirectory(opts);
+            var isSuccess = mover.Move();
+
+            return isSuccess ? 1 : -1;
+        }
+        
         static int JoinVideos(JoinMultipleVideosOptions opts)
         {
             Console.WriteLine($"{opts.Path}");
