@@ -32,18 +32,7 @@ namespace WindowsHelper.Tasks
 
             if (!_options.IsFileListAlreadyExist)
             {
-                var fileQuery = directory.GetFiles()
-                    .Where(file => VideoExtensions.Contains(Path.GetExtension(file.Name)))
-                    .AsEnumerable();
-
-                if (_options.IsNumberAppended)
-                {
-                    fileQuery = fileQuery.OrderBy(file => int.Parse(file.Name.Split("-")[0]));
-                }
-
-                var lines = fileQuery.Select(file => $"file {file.Name}").ToList();
-
-                File.WriteAllLines(Path.Join(_options.Path, VideoListFileName), lines);
+                GenerateTextFilesToBeConsumedByFfmpeg(directory);
             }
 
             Console.WriteLine("Joining the following files");
@@ -51,11 +40,18 @@ namespace WindowsHelper.Tasks
 
             if (_options.IsDryRun) return;
 
+            JoinUsingFfmpeg(VideoListFileName);
+        }
+
+        private void JoinUsingFfmpeg(string inputFileName)
+        {
+            Console.WriteLine($"Joining based on {inputFileName}");
+            
             var outBuilder = new StringBuilder();
             var errorBuilder = new StringBuilder();
 
             var commandResult = Cli.Wrap("ffmpeg.exe")
-                .WithArguments($"-f concat -i {VideoListFileName} -c copy {_options.OutputFileName}")
+                .WithArguments($"-f concat -i {inputFileName} -c copy {_options.OutputFileName}")
                 .WithStandardOutputPipe(PipeTarget.ToStringBuilder(outBuilder))
                 .WithStandardErrorPipe(PipeTarget.ToStringBuilder(errorBuilder))
                 .ExecuteAsync()
@@ -67,6 +63,22 @@ namespace WindowsHelper.Tasks
             Console.WriteLine("******************");
             Console.WriteLine("Error");
             Console.WriteLine(errorBuilder.ToString());
+        }
+
+        private void GenerateTextFilesToBeConsumedByFfmpeg(DirectoryInfo directory)
+        {
+            var fileQuery = directory.GetFiles()
+                .Where(file => VideoExtensions.Contains(Path.GetExtension(file.Name)))
+                .AsEnumerable();
+
+            if (_options.IsNumberAppended)
+            {
+                fileQuery = fileQuery.OrderBy(file => int.Parse(file.Name.Split("-")[0]));
+            }
+
+            var lines = fileQuery.Select(file => $"file {file.Name}").ToList();
+
+            File.WriteAllLines(Path.Join(_options.Path, VideoListFileName), lines);
         }
     }
 }
