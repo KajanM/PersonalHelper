@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using WindowsHelper.ConsoleOptions;
+using WindowsHelper.Tasks.Extensions;
 
 namespace WindowsHelper.Tasks
 {
@@ -22,22 +22,7 @@ namespace WindowsHelper.Tasks
 
             foreach (var file in directory.GetFiles())
             {
-                var nameExcludingTheIgnoredChars = Regex
-                    .Replace(Path.GetFileNameWithoutExtension(file.Name), @"[^A-Za-z0-9]+", "-")
-                    .ToLower();
-
-                var newName = file.FullName.Replace(file.Name, $"{nameExcludingTheIgnoredChars}{file.Extension}");
-                if (newName == file.FullName)
-                {
-                    Console.WriteLine("____Ignore");
-                    continue;
-                }
-
-
-                Console.WriteLine($"From: {file.FullName}{Environment.NewLine}To: {newName}{Environment.NewLine}");
-                if (_options.IsDryRun) continue;
-
-                File.Move(file.FullName, newName);
+                file.RenameByReplacingSpecialChars(_options.IsDryRun);
             }
         }
     }
