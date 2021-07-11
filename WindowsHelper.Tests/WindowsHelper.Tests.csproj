@@ -17,4 +17,11 @@
       <ProjectReference Include="..\WindowsHelper.ConsoleApp\WindowsHelper.ConsoleApp.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="resources\dont-worry.mp4" />
+      <EmbeddedResource Include="resources\dont-worry.mp4">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>
