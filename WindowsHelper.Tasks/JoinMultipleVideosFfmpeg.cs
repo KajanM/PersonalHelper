@@ -38,13 +38,12 @@ namespace WindowsHelper.Tasks
                 await GenerateTextFilesToBeConsumedByFfmpegAsync(directory);
             }
 
-            var videoJoinTasks = new List<Task<BufferedCommandResult>>();
-            foreach (var ffmpegInputFile in directory.GetFiles($"{_options.OutputFileName}-*-*.txt"))
-            {
-                videoJoinTasks.Add(Task.Run(() => FfmpegCommandHelper.ConcatMediaAsync(ffmpegInputFile.Name,
-                    $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{_options.OutputExtension}",
-                    _options.IsDryRun)));
-            }
+            var videoJoinTasks = directory.GetFiles($"{_options.OutputFileName}-*-*.txt")
+                .Select(ffmpegInputFile =>
+                    Task.Run(() => FfmpegCommandHelper.ConcatMediaAsync(ffmpegInputFile.Name,
+                        $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{_options.OutputExtension}",
+                        _options.IsDryRun)))
+                .ToList();
 
             var allTasks = Task.WhenAll(videoJoinTasks);
             try
