@@ -14,7 +14,6 @@ namespace WindowsHelper.Tasks
     public class JoinMultipleVideosFfmpeg
     {
         private readonly JoinMultipleVideosFfmpegOptions _options;
-        private const string VideoListFileName = "files";
 
         private static readonly List<string> VideoExtensions =
             new List<string>
@@ -38,7 +37,7 @@ namespace WindowsHelper.Tasks
                 await GenerateTextFilesToBeConsumedByFfmpegAsync(directory);
             }
 
-            foreach (var ffmpegInputFile in directory.GetFiles("files-*.txt"))
+            foreach (var ffmpegInputFile in directory.GetFiles($"{_options.OutputFileName}-*-*.txt"))
             {
                 await JoinUsingFfmpegAsync(ffmpegInputFile.Name, $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{_options.OutputExtension}", _options.IsDryRun);
             }
@@ -84,7 +83,7 @@ namespace WindowsHelper.Tasks
                 
                 if (_options.MaximumHourLimit <= 0 || durationInSeconds >= _options.MaximumHourLimit * 60 * 60 || i == allVideos.Count - 1)
                 { 
-                    var videoListTextFileName = $"{VideoListFileName}-{startCount}-{i + 1}.txt";
+                    var videoListTextFileName = $"{_options.OutputFileName}-{startCount}-{i + 1}.txt";
                     Console.WriteLine($"Writing to {videoListTextFileName}");
                     await File.WriteAllLinesAsync(Path.Join(_options.Path, videoListTextFileName), fileNames);
                     
