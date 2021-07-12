@@ -38,11 +38,22 @@ namespace WindowsHelper.Tasks
                 await GenerateTextFilesToBeConsumedByFfmpegAsync(directory);
             }
 
+            var videoJoinTasks = new List<Task<BufferedCommandResult>>();
             foreach (var ffmpegInputFile in directory.GetFiles($"{_options.OutputFileName}-*-*.txt"))
             {
-                await FfmpegCommandHelper.ConcatMediaAsync(ffmpegInputFile.Name,
+                videoJoinTasks.Add(Task.Run(() => FfmpegCommandHelper.ConcatMediaAsync(ffmpegInputFile.Name,
                     $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{_options.OutputExtension}",
-                    _options.IsDryRun);
+                    _options.IsDryRun)));
+            }
+
+            var allTasks = Task.WhenAll(videoJoinTasks);
+            try
+            {
+                allTasks.Wait();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"An error occured while joining the videos.{Environment.NewLine}{e}");
             }
         }
 
