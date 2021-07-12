@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks;
 using CommandLine;
@@ -16,23 +17,23 @@ namespace WindowsHelper.ConsoleApp
                 JoinMultipleVideosFfmpegOptions
                 >(args)
                 .MapResult(
-                    (AppendNumberToFilesOptions opts) => PrependFileNamesWithNumber(opts),
-                    (ChangeSystemTimeOptions opts) => ChangeSystemTime(opts),
-                    (JoinMultipleVideosOptions opts) => JoinVideos(opts),
-                    (MoveToParentDirectoryOptions opts) => MoveToParentDirectory(opts),
-                    (ReplaceInvalidCharsFromFileNameOptions opts) => ReplaceInvalidChars(opts),
-                    (JoinMultipleVideosFfmpegOptions opts) => JoinVideosFfmpeg(opts),
-                    HandleParseError);
+                    async (AppendNumberToFilesOptions opts) => await PrependFileNamesWithNumberAsync(opts),
+                    async (ChangeSystemTimeOptions opts) => await ChangeSystemTimeAsync(opts),
+                    async (JoinMultipleVideosOptions opts) => await JoinVideosAsync(opts),
+                    async (MoveToParentDirectoryOptions opts) => await MoveToParentDirectoryAsync(opts),
+                    async (ReplaceInvalidCharsFromFileNameOptions opts) => await ReplaceInvalidCharsAsync(opts),
+                    async (JoinMultipleVideosFfmpegOptions opts) => await JoinVideosFfmpegAsync(opts),
+                    HandleParseErrorAsync);
         }
 
-        private static int JoinVideosFfmpeg(JoinMultipleVideosFfmpegOptions opts)
+        private static async Task<int> JoinVideosFfmpegAsync(JoinMultipleVideosFfmpegOptions opts)
         {
             var joiner = new JoinMultipleVideosFfmpeg(opts);
-            joiner.Join();
+            await joiner.JoinAsync();
             return 1;
         }
 
-        static int ReplaceInvalidChars(ReplaceInvalidCharsFromFileNameOptions opts)
+        static async Task<int> ReplaceInvalidCharsAsync(ReplaceInvalidCharsFromFileNameOptions opts)
         {
             var replacer = new ReplaceInvalidCharsFromFileName(opts);
             
@@ -41,7 +42,7 @@ namespace WindowsHelper.ConsoleApp
             return 1;
         }
         
-        static int MoveToParentDirectory(MoveToParentDirectoryOptions opts)
+        static async Task<int> MoveToParentDirectoryAsync(MoveToParentDirectoryOptions opts)
         {
             Console.WriteLine($"{opts.Path}");
 
@@ -51,7 +52,7 @@ namespace WindowsHelper.ConsoleApp
             return isSuccess ? 1 : -1;
         }
         
-        static int JoinVideos(JoinMultipleVideosOptions opts)
+        static async Task<int> JoinVideosAsync(JoinMultipleVideosOptions opts)
         {
             Console.WriteLine($"{opts.Path}");
             var joiner = new VideoJoiner(opts);
@@ -61,7 +62,7 @@ namespace WindowsHelper.ConsoleApp
             return isSuccess ? 1 : -1;
         }
 
-        static int PrependFileNamesWithNumber(AppendNumberToFilesOptions opts)
+        static async Task<int> PrependFileNamesWithNumberAsync(AppendNumberToFilesOptions opts)
         {
             Console.WriteLine($"{opts.Path}");
             var fileOrganizer = new FileOrganizer(opts);
@@ -70,7 +71,7 @@ namespace WindowsHelper.ConsoleApp
             return 1;
         }
 
-        static int ChangeSystemTime(ChangeSystemTimeOptions opts)
+        static async Task<int> ChangeSystemTimeAsync(ChangeSystemTimeOptions opts)
         {
             try
             {
@@ -87,7 +88,7 @@ namespace WindowsHelper.ConsoleApp
             }
         }
 
-        static int HandleParseError(IEnumerable<Error> errs)
+        static async Task<int> HandleParseErrorAsync(IEnumerable<Error> errs)
         {
             Console.WriteLine(string.Join(Environment.NewLine, errs));
             Console.ReadLine();
