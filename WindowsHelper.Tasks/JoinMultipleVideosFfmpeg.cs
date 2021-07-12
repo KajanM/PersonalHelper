@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks.Extensions;
+using WindowsHelper.Tasks.Helpers;
 using CliWrap;
 using CliWrap.Buffered;
 
@@ -39,23 +40,10 @@ namespace WindowsHelper.Tasks
 
             foreach (var ffmpegInputFile in directory.GetFiles($"{_options.OutputFileName}-*-*.txt"))
             {
-                await JoinUsingFfmpegAsync(ffmpegInputFile.Name, $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{_options.OutputExtension}", _options.IsDryRun);
+                await FfmpegCommandHelper.ConcatMediaAsync(ffmpegInputFile.Name,
+                    $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{_options.OutputExtension}",
+                    _options.IsDryRun);
             }
-        }
-
-        private async Task JoinUsingFfmpegAsync(string inputFileName, string outputFileName, bool isDryRun)
-        {
-            Console.WriteLine($"Joining based on {inputFileName}");
-            Console.WriteLine(await File.ReadAllTextAsync(inputFileName));
-            
-            if(isDryRun) return;
-
-            var commandResult = Cli.Wrap("ffmpeg.exe")
-                .WithArguments($"-f concat -i {inputFileName} -c copy {outputFileName}")
-                .ExecuteBufferedAsync().Task.Result;
-
-            Console.WriteLine(commandResult.StandardOutput);
-            Console.WriteLine(commandResult.StandardError);
         }
 
         private async Task GenerateTextFilesToBeConsumedByFfmpegAsync(DirectoryInfo directory)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Buffered;
@@ -29,6 +30,24 @@ namespace WindowsHelper.Tasks.Helpers
             Console.WriteLine($"{nearestSecondsInteger} seconds");
 
             return (nearestSecondsInteger, commandResult);
+        }
+
+        public static async Task<BufferedCommandResult> ConcatMediaAsync(string inputFileName, string outputFileName,
+            bool optionsIsDryRun)
+        {
+            Console.WriteLine($"Joining based on {inputFileName}");
+            Console.WriteLine(await File.ReadAllTextAsync(inputFileName));
+
+            if (optionsIsDryRun) return null;
+            
+            var commandResult = Cli.Wrap("ffmpeg.exe")
+                .WithArguments($"-f concat -i {inputFileName} -c copy {outputFileName}")
+                .ExecuteBufferedAsync().Task.Result;
+
+            Console.WriteLine(commandResult.StandardOutput);
+            Console.WriteLine(commandResult.StandardError);
+
+            return commandResult;
         }
     }
 }
