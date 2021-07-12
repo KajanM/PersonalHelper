@@ -57,6 +57,7 @@ namespace WindowsHelper.Tasks
                 fileQuery = fileQuery.OrderBy(file => int.Parse(file.Name.Split("_")[0]));
             }
 
+            // group videos such that the group duration meets the input maximum-hour-limit
             var allVideos = fileQuery.ToList();
             var durationInSeconds = 0;
             var fileNames = new List<string>();
