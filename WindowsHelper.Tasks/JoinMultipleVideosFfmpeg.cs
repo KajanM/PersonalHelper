@@ -40,7 +40,7 @@ namespace WindowsHelper.Tasks
 
             foreach (var ffmpegInputFile in directory.GetFiles("files-*.txt"))
             {
-                await JoinUsingFfmpegAsync(ffmpegInputFile.Name, $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.mp4", _options.IsDryRun);
+                await JoinUsingFfmpegAsync(ffmpegInputFile.Name, $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{_options.OutputExtension}", _options.IsDryRun);
             }
         }
 

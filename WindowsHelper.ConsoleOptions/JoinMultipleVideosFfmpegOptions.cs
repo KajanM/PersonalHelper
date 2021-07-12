@@ -23,6 +23,11 @@ namespace WindowsHelper.ConsoleOptions
                 "Maximum hour limit to determine the number of videos to join. Set to 0 if joining all the videos. Defaults to 2 hours.")]
         public int MaximumHourLimit { get; set; } = 2;
 
+        [Option('e', "extension", Required = false,
+            HelpText =
+                "The output extension. Defaults to mp4")]
+        public string OutputExtension { get; set; } = "mp4";
+
         [Option('d', "dry", Required = false,
             HelpText = "Prints the expected change without really affecting the file system")]
         public bool IsDryRun { get; set; }
