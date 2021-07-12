@@ -10,18 +10,23 @@ namespace WindowsHelper.Tasks.Helpers
         public static async Task<(int seconds, BufferedCommandResult cmdResult)> GetMediaDurationAsync(
             string filePathWithName)
         {
-            var commandResult = await Cli.Wrap("ffprobe.exe")
+            Console.WriteLine($"Attempting to get duration of {filePathWithName}");
+            
+            // for some reason using await crashes the app sometimes
+            var commandResult = Cli.Wrap("ffprobe.exe")
                 .WithArguments(
-                    $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {filePathWithName}")
-                .ExecuteBufferedAsync();
+                    $"-v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"{filePathWithName}\"")
+                .ExecuteBufferedAsync().Task.Result;
 
             var isParseableString = float.TryParse(commandResult.StandardOutput, out var seconds);
 
             if (!isParseableString)
                 throw new ArgumentException(
-                    $"Unable to get media duration{Environment.NewLine}Seconds string: {commandResult.StandardOutput}");
+                    $"Unable to get media duration{Environment.NewLine}Seconds string: {commandResult.StandardError}");
 
             var nearestSecondsInteger = (int) Math.Ceiling(seconds);
+
+            Console.WriteLine($"{nearestSecondsInteger} seconds");
 
             return (nearestSecondsInteger, commandResult);
         }
