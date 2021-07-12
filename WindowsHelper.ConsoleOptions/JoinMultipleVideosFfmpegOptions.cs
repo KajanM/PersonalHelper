@@ -11,7 +11,7 @@ namespace WindowsHelper.ConsoleOptions
         [Option('o', "output-filename", Required = false, HelpText = "The output file name. Defaults to 'joint'")]
         public string OutputFileName { get; set; } = "joint";
 
-        [Option('i', "ignore-list-generation", Required = false, HelpText = "Ignore generating list")]
+        [Option('i', "ignore-list-generation", Required = false, HelpText = "Does input files for ffmpeg already exist")]
         public bool IsFileListAlreadyExist { get; set; }
 
         [Option('n', "is-number-appended", Required = false,
