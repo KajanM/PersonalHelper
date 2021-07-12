@@ -2,7 +2,7 @@
 
 namespace WindowsHelper.ConsoleOptions
 {
-    [Verb("join-ffmpeg", HelpText = "Join all videos in a directory using ffmpeg")]
+    [Verb("join", HelpText = "Join all videos in a directory using ffmpeg")]
     public class JoinMultipleVideosFfmpegOptions
     {
         [Option('p', "path", Required = false, HelpText = "Path to perform action. Defaults to the current directory")]
