@@ -40,7 +40,7 @@ namespace WindowsHelper.Tasks
 
             var videoJoinTasks = directory.GetFiles($"{_options.OutputFileName}-*-*.txt")
                 .Select(ffmpegInputFile =>
-                    Task.Run(() => FfmpegCommandHelper.ConcatMediaAsync(ffmpegInputFile.Name,
+                    Task.Run(async () => await FfmpegCommandHelper.ConcatMediaAsync(ffmpegInputFile.Name,
                         $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{_options.OutputExtension}",
                         _options.IsDryRun)))
                 .ToList();
