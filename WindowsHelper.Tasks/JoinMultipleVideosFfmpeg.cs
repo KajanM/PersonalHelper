@@ -64,7 +64,7 @@ namespace WindowsHelper.Tasks
 
             if (_options.IsNumberAppended)
             {
-                fileQuery = fileQuery.OrderBy(file => int.Parse(file.Name.Split("_")[0]));
+                fileQuery = fileQuery.OrderBy(file => int.Parse(file.Name.Split(_options.NumberSeparatorChar)[0]));
             }
 
             // group videos such that the group duration meets the input maximum-hour-limit

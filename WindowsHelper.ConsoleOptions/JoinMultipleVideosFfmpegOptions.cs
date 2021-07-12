@@ -18,6 +18,10 @@ namespace WindowsHelper.ConsoleOptions
             HelpText = "Number is appended to the file name. Used to order the files")]
         public bool IsNumberAppended { get; set; }
 
+        [Option("separator", Required = false,
+            HelpText = "Number separator char used in the file name. Defaults to '-'.")]
+        public string NumberSeparatorChar { get; set; } = "-";
+
         [Option('h', "hour-limit", Required = false,
             HelpText =
                 "Maximum hour limit to determine the number of videos to join. Set to 0 if joining all the videos. Defaults to 2 hours.")]
