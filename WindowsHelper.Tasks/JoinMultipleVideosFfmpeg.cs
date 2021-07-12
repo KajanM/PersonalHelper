@@ -79,8 +79,12 @@ namespace WindowsHelper.Tasks
                 var mediaDurationResult = await file.GetMediaDurationAsync();
                 durationInSeconds += mediaDurationResult.seconds;
                 fileNames.Add($"file '{file.Name}'");
+
+                var doJoinAllVideos = _options.MaximumHourLimit <= 0;
+                var isMaximumHourLimitReached = durationInSeconds >= _options.MaximumHourLimit * 60 * 60;
+                var isLastVideo = i == allVideos.Count - 1;
                 
-                if (_options.MaximumHourLimit <= 0 || durationInSeconds >= _options.MaximumHourLimit * 60 * 60 || i == allVideos.Count - 1)
+                if ((!doJoinAllVideos && isMaximumHourLimitReached) || isLastVideo)
                 { 
                     var videoListTextFileName = $"{_options.OutputFileName}-{startCount}-{i + 1}.txt";
                     Console.WriteLine($"Writing to {videoListTextFileName}");
