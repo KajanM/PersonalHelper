@@ -8,8 +8,8 @@ namespace WindowsHelper.ConsoleOptions
         [Option('p', "path", Required = false, HelpText = "Path to perform action. Defaults to the current directory")]
         public string Path { get; set; }
 
-        [Option('o', "output-filename", Required = false, HelpText = "The output file name. Defaults to 'joint'")]
-        public string OutputFileName { get; set; } = "joint";
+        [Option('o', "output-filename", Required = false, HelpText = "The output file name. Defaults to the parent directory name")]
+        public string OutputFileName { get; set; }
 
         [Option('i', "ignore-list-generation", Required = false, HelpText = "Does input files for ffmpeg already exist")]
         public bool IsFileListAlreadyExist { get; set; }

@@ -27,6 +27,7 @@ namespace WindowsHelper.Tasks
         {
             _options = options;
             _options.Path ??= Environment.CurrentDirectory;
+            _options.OutputFileName = Path.GetFileName(_options.Path).ReplaceInvalidChars();
         }
 
         public async Task JoinAsync()
