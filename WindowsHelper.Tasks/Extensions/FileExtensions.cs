@@ -11,9 +11,7 @@ namespace WindowsHelper.Tasks.Extensions
     {
         public static void RenameByReplacingSpecialChars(this FileInfo file, bool isDryRun, string replaceByChar = "-")
         {
-            var nameExcludingTheIgnoredChars = Regex
-                .Replace(Path.GetFileNameWithoutExtension(file.Name), @"[^A-Za-z0-9]+", replaceByChar)
-                .ToLower();
+            var nameExcludingTheIgnoredChars = file.Name.ReplaceInvalidChars();
 
             var newName = file.FullName.Replace(file.Name, $"{nameExcludingTheIgnoredChars}{file.Extension}");
 
