@@ -11,7 +11,7 @@ namespace WindowsHelper.ConsoleApp
     {
         static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions, JoinMultipleVideosOptions,
+            Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions,
                 MoveToParentDirectoryOptions,
                 ReplaceInvalidCharsFromFileNameOptions,
                 JoinMultipleVideosFfmpegOptions
@@ -19,7 +19,6 @@ namespace WindowsHelper.ConsoleApp
                 .MapResult(
                     async (AppendNumberToFilesOptions opts) => await PrependFileNamesWithNumberAsync(opts),
                     async (ChangeSystemTimeOptions opts) => await ChangeSystemTimeAsync(opts),
-                    async (JoinMultipleVideosOptions opts) => await JoinVideosAsync(opts),
                     async (MoveToParentDirectoryOptions opts) => await MoveToParentDirectoryAsync(opts),
                     async (ReplaceInvalidCharsFromFileNameOptions opts) => await ReplaceInvalidCharsAsync(opts),
                     async (JoinMultipleVideosFfmpegOptions opts) => await JoinVideosFfmpegAsync(opts),
@@ -52,16 +51,6 @@ namespace WindowsHelper.ConsoleApp
             return isSuccess ? 1 : -1;
         }
         
-        static async Task<int> JoinVideosAsync(JoinMultipleVideosOptions opts)
-        {
-            Console.WriteLine($"{opts.Path}");
-            var joiner = new VideoJoiner(opts);
-
-            var isSuccess = joiner.JoinVideosAsync().Result;
-
-            return isSuccess ? 1 : -1;
-        }
-
         static async Task<int> PrependFileNamesWithNumberAsync(AppendNumberToFilesOptions opts)
         {
             Console.WriteLine($"{opts.Path}");
