@@ -9,7 +9,7 @@ namespace WindowsHelper.Tasks.Extensions
 {
     public static class FileExtensions
     {
-        public static void RenameByReplacingSpecialChars(this FileInfo file, bool isDryRun, string replaceByChar = "_")
+        public static void RenameByReplacingSpecialChars(this FileInfo file, bool isDryRun, string replaceByChar = "-")
         {
             var nameExcludingTheIgnoredChars = Regex
                 .Replace(Path.GetFileNameWithoutExtension(file.Name), @"[^A-Za-z0-9]+", replaceByChar)
