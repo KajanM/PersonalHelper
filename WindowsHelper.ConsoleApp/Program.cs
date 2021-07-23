@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks;
 using CommandLine;
+using Serilog;
 
 namespace WindowsHelper.ConsoleApp
 {
@@ -11,6 +12,13 @@ namespace WindowsHelper.ConsoleApp
     {
         static void Main(string[] args)
         {
+            using var log = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("panda.txt")
+                .CreateLogger();
+            Log.Logger = log;
+            
             Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions,
                 MoveToParentDirectoryOptions,
                 ReplaceInvalidCharsFromFileNameOptions,
