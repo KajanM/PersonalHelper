@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WindowsHelper.Tasks.Helpers;
 using CliWrap.Buffered;
+using Serilog;
 
 namespace WindowsHelper.Tasks.Extensions
 {
@@ -17,11 +18,11 @@ namespace WindowsHelper.Tasks.Extensions
 
             if (newName == file.FullName)
             {
-                Console.WriteLine("____Ignore");
+                Log.Information("____Ignore");
                 return;
             }
 
-            Console.WriteLine($"From: {file.FullName}{Environment.NewLine}To: {newName}{Environment.NewLine}");
+            Log.Information($"From: {file.FullName}{Environment.NewLine}To: {newName}{Environment.NewLine}");
             if (isDryRun) return;
 
             File.Move(file.FullName, newName);

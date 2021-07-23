@@ -9,6 +9,7 @@ using WindowsHelper.Tasks.Extensions;
 using WindowsHelper.Tasks.Helpers;
 using CliWrap;
 using CliWrap.Buffered;
+using Serilog;
 
 namespace WindowsHelper.Tasks
 {
@@ -53,7 +54,7 @@ namespace WindowsHelper.Tasks
             }
             catch (Exception e)
             {
-                Console.WriteLine($"An error occured while joining the videos.{Environment.NewLine}{e}");
+                Log.Information($"An error occured while joining the videos.{Environment.NewLine}{e}");
             }
         }
 
@@ -88,7 +89,7 @@ namespace WindowsHelper.Tasks
                 if ((!doJoinAllVideos && isMaximumHourLimitReached) || isLastVideo)
                 { 
                     var videoListTextFileName = $"{_options.OutputFileName}-{startCount}-{i + 1}.txt";
-                    Console.WriteLine($"Writing to {videoListTextFileName}");
+                    Log.Information($"Writing to {videoListTextFileName}");
                     await File.WriteAllLinesAsync(Path.Join(_options.Path, videoListTextFileName), fileNames);
                     
                     startCount = i + 2;

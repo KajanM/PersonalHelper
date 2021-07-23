@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using WindowsHelper.ConsoleOptions;
+using Serilog;
 
 namespace WindowsHelper.Tasks
 {
@@ -33,7 +34,7 @@ namespace WindowsHelper.Tasks
 
                     if (_options.IsDryRun)
                     {
-                        Console.WriteLine(
+                        Log.Information(
                             $"To: {moveToPath}{Environment.NewLine}From: {file.FullName}{Environment.NewLine}");
                     }
                     else

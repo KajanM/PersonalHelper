@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
+using Serilog;
 
 namespace WindowsHelper.ConsoleApp
 {
@@ -38,11 +39,11 @@ namespace WindowsHelper.ConsoleApp
 
         public async static Task<bool> ResetTime(ChangeSystemTimeOptions options)
         {
-            Console.WriteLine($"Fetching UTC time from {UtcTimeApi}");
+            Log.Information($"Fetching UTC time from {UtcTimeApi}");
             var response = await GetUtcTimeFromApi();
 
             var currentTime = response.DateTime;
-            Console.WriteLine($"Latest time information received {currentTime}");
+            Log.Information($"Latest time information received {currentTime}");
 
             options.Year = (short)currentTime.Year;
             options.Month = (short)currentTime.Month;
@@ -85,23 +86,23 @@ namespace WindowsHelper.ConsoleApp
                     wMilliseconds = (short) toDateTimeUtc.Millisecond
                 };
 
-                Console.WriteLine($"Current time is {utcNow.UtcToSriLankaTime()}");
-                Console.WriteLine($"Changing system time to {toDateTimeLocal}");
+                Log.Information($"Current time is {utcNow.UtcToSriLankaTime()}");
+                Log.Information($"Changing system time to {toDateTimeLocal}");
                 
                 var isSuccess = SetSystemTime(ref st);
 
                 if (!isSuccess)
                 {
-                    Console.WriteLine("Unable to change time, are you running with admin privilege?");
+                    Log.Error("Unable to change time, are you running with admin privilege?");
                     return false;
                 }
 
-                Console.WriteLine($"Current time is {DateTime.UtcNow.UtcToSriLankaTime()}");
+                Log.Information($"Current time is {DateTime.UtcNow.UtcToSriLankaTime()}");
             }
             else
             {
-                Console.WriteLine($"Current time is {utcNow}");
-                Console.WriteLine($"The time will be set to {toDateTimeLocal}");
+                Log.Information($"Current time is {utcNow}");
+                Log.Information($"The time will be set to {toDateTimeLocal}");
             }
 
             return true;

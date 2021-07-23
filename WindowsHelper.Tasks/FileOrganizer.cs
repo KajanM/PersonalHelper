@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using WindowsHelper.ConsoleOptions;
+using Serilog;
 
 namespace WindowsHelper.Tasks
 {
@@ -36,9 +37,9 @@ namespace WindowsHelper.Tasks
                 var destinationFileName = file.FullName.Replace(file.Name, $"{directoryNumber}-{file.Name}");
                 if (_options.IsDryRun)
                 {
-                    Console.WriteLine(file.FullName);
-                    Console.WriteLine(destinationFileName);
-                    Console.WriteLine("****************");
+                    Log.Information(file.FullName);
+                    Log.Information(destinationFileName);
+                    Log.Information("****************");
                 }
                 else
                 {

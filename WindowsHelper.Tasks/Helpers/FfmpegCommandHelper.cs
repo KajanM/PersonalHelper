@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using CliWrap;
 using CliWrap.Buffered;
+using Serilog;
 
 namespace WindowsHelper.Tasks.Helpers
 {
@@ -11,7 +12,7 @@ namespace WindowsHelper.Tasks.Helpers
         public static async Task<(int seconds, BufferedCommandResult cmdResult)> GetMediaDurationAsync(
             string filePathWithName)
         {
-            Console.WriteLine($"Attempting to get duration of {filePathWithName}");
+            Log.Information($"Attempting to get duration of {filePathWithName}");
             
             // for some reason using await crashes the app sometimes
             var commandResult = Cli.Wrap("ffprobe.exe")
@@ -27,7 +28,7 @@ namespace WindowsHelper.Tasks.Helpers
 
             var nearestSecondsInteger = (int) Math.Ceiling(seconds);
 
-            Console.WriteLine($"{nearestSecondsInteger} seconds");
+            Log.Information($"{nearestSecondsInteger} seconds");
 
             return (nearestSecondsInteger, commandResult);
         }
@@ -35,8 +36,8 @@ namespace WindowsHelper.Tasks.Helpers
         public static async Task<BufferedCommandResult> ConcatMediaAsync(string inputFileName, string outputFileName,
             bool optionsIsDryRun)
         {
-            Console.WriteLine($"Joining based on {inputFileName}");
-            Console.WriteLine(await File.ReadAllTextAsync(inputFileName));
+            Log.Information($"Joining based on {inputFileName}");
+            Log.Information(await File.ReadAllTextAsync(inputFileName));
 
             if (optionsIsDryRun) return null;
             
@@ -44,8 +45,8 @@ namespace WindowsHelper.Tasks.Helpers
                 .WithArguments($"-f concat -i {inputFileName} -c copy {outputFileName}")
                 .ExecuteBufferedAsync().Task.Result;
 
-            Console.WriteLine(commandResult.StandardOutput);
-            Console.WriteLine(commandResult.StandardError);
+            Log.Information(commandResult.StandardOutput);
+            Log.Information(commandResult.StandardError);
 
             return commandResult;
         }

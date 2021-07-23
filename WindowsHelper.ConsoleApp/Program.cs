@@ -51,7 +51,7 @@ namespace WindowsHelper.ConsoleApp
         
         static async Task<int> MoveToParentDirectoryAsync(MoveToParentDirectoryOptions opts)
         {
-            Console.WriteLine($"{opts.Path}");
+            Log.Information($"{opts.Path}");
 
             var mover = new MoveToParentDirectory(opts);
             var isSuccess = mover.Move();
@@ -61,7 +61,7 @@ namespace WindowsHelper.ConsoleApp
         
         static async Task<int> PrependFileNamesWithNumberAsync(AppendNumberToFilesOptions opts)
         {
-            Console.WriteLine($"{opts.Path}");
+            Log.Information($"{opts.Path}");
             var fileOrganizer = new FileOrganizer(opts);
             fileOrganizer.PrependFileNamesWithNumber();
 
@@ -80,14 +80,14 @@ namespace WindowsHelper.ConsoleApp
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log.Error("Unable to change the system time. {@opts} Exception: {e}", opts, e);
                 return -1;
             }
         }
 
         static async Task<int> HandleParseErrorAsync(IEnumerable<Error> errs)
         {
-            Console.WriteLine(string.Join(Environment.NewLine, errs));
+            Log.Information(string.Join(Environment.NewLine, errs));
             Console.ReadLine();
 
             return -1;
