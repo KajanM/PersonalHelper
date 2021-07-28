@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using WindowsHelper.Tasks.Helpers;
@@ -31,6 +33,20 @@ namespace WindowsHelper.Tasks.Extensions
         public static async Task<(int seconds, BufferedCommandResult cmdResult)> GetMediaDurationAsync(this FileInfo file)
         {
             return await FfmpegCommandHelper.GetMediaDurationAsync(file.FullName);
+        }
+
+        public static IEnumerable<FileInfo> GetVideos(this DirectoryInfo directory)
+        {
+            var videoExtensions =
+                new List<string>
+                    {
+                        "mp4", "mov", "wmv", "ts", "avi", "webm"
+                    }
+                    .Select(e => $".{e}").ToList();
+            
+            return directory.GetFiles()
+                .Where(file => videoExtensions.Contains(Path.GetExtension(file.Name)))
+                .AsEnumerable();
         }
     }
 }
