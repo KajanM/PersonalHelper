@@ -17,13 +17,6 @@ namespace WindowsHelper.Tasks
     {
         private readonly JoinMultipleVideosFfmpegOptions _options;
 
-        private static readonly List<string> VideoExtensions =
-            new List<string>
-                {
-                    "mp4", "mov", "wmv", "ts", "avi", "webm"
-                }
-                .Select(e => $".{e}").ToList();
-
         public JoinMultipleVideosFfmpeg(JoinMultipleVideosFfmpegOptions options)
         {
             _options = options;
@@ -60,9 +53,7 @@ namespace WindowsHelper.Tasks
 
         private async Task GenerateTextFilesToBeConsumedByFfmpegAsync(DirectoryInfo directory)
         {
-            var fileQuery = directory.GetFiles()
-                .Where(file => VideoExtensions.Contains(Path.GetExtension(file.Name)))
-                .AsEnumerable();
+            var fileQuery = directory.GetVideos();
 
             if (_options.IsNumberAppended)
             {
