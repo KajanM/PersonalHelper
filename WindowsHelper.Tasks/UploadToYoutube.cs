@@ -19,7 +19,6 @@ namespace WindowsHelper.Tasks
 {
     public static class UploadToYoutube
     {
-        [STAThread]
         public static async Task<int> UploadAllAsync(UploadToYoutubeOptions options)
         {
             var credential = await GetCredentialAsync();
@@ -42,7 +41,6 @@ namespace WindowsHelper.Tasks
             return 1;
         }
 
-        [STAThread]
         private static async Task<UserCredential> GetCredentialAsync()
         {
             var credentialFilePath = Path.Join(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),
@@ -69,7 +67,6 @@ namespace WindowsHelper.Tasks
         }
 
         
-        [STAThread]
         private static async Task<Video> UploadAsync(string filePath, YouTubeService youtubeService)
         {
             var video = new Video
@@ -95,7 +92,6 @@ namespace WindowsHelper.Tasks
             return video;
         }
 
-        [STAThread]
         private static void videosInsertRequest_ProgressChanged(IUploadProgress progress)
         {
             switch (progress.Status)
@@ -114,7 +110,6 @@ namespace WindowsHelper.Tasks
             }
         }
 
-        [STAThread]
         private static void videosInsertRequest_ResponseReceived(Video video)
         {
             Log.Information("Video id '{0}' was successfully uploaded.", video.Id);
