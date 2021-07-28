@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks.Extensions;
 using WindowsHelper.Tasks.Helpers;
-using CliWrap;
-using CliWrap.Buffered;
 using Serilog;
 
 namespace WindowsHelper.Tasks
