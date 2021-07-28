@@ -15,7 +15,8 @@ namespace WindowsHelper.ConsoleApp
             Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions,
                     MoveToParentDirectoryOptions,
                     ReplaceInvalidCharsFromFileNameOptions,
-                    JoinMultipleVideosFfmpegOptions
+                    JoinMultipleVideosFfmpegOptions,
+                    UploadToYoutubeOptions
                 >(args)
                 .MapResult(
                     async (AppendNumberToFilesOptions opts) => await PrependFileNamesWithNumberAsync(opts),
@@ -23,6 +24,7 @@ namespace WindowsHelper.ConsoleApp
                     async (MoveToParentDirectoryOptions opts) => await MoveToParentDirectoryAsync(opts),
                     async (ReplaceInvalidCharsFromFileNameOptions opts) => await ReplaceInvalidCharsAsync(opts),
                     async (JoinMultipleVideosFfmpegOptions opts) => await JoinVideosFfmpegAsync(opts),
+                    async (UploadToYoutubeOptions opts) => await UploadToYoutube.UploadAllAsync(opts),
                     HandleParseErrorAsync);
         }
 

@@ -24,4 +24,10 @@
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Config\client_secret.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
