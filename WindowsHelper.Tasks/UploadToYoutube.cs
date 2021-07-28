@@ -29,7 +29,8 @@ namespace WindowsHelper.Tasks
                 ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
             });
 
-            var videosToUpload = new DirectoryInfo(options.Path).GetVideos().ToList();
+            var currentDirectory = new DirectoryInfo(options.Path);
+            var videosToUpload = currentDirectory.GetVideos().ToList();
 
             foreach (var videoToUpload in videosToUpload)
             {
