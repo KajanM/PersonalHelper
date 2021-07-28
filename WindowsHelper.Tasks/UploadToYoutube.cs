@@ -35,7 +35,7 @@ namespace WindowsHelper.Tasks
             {
                 Log.Information("Starting to upload {0}", videoToUpload.Name);
                 var uploadedVideo = await UploadAsync(videoToUpload.FullName, youtubeService);
-                Log.Information("Upload status of {0}: {1}", videoToUpload.Name, uploadedVideo.Status.UploadStatus);
+                Log.Information("Upload status of {0}: {1}", videoToUpload.Name, uploadedVideo.Status);
             }
 
             return 1;
@@ -67,7 +67,7 @@ namespace WindowsHelper.Tasks
         }
 
         
-        private static async Task<Video> UploadAsync(string filePath, YouTubeService youtubeService)
+        private static async Task<IUploadProgress> UploadAsync(string filePath, YouTubeService youtubeService)
         {
             var video = new Video
             {
@@ -86,10 +86,7 @@ namespace WindowsHelper.Tasks
             videosInsertRequest.ProgressChanged += videosInsertRequest_ProgressChanged;
             videosInsertRequest.ResponseReceived += videosInsertRequest_ResponseReceived;
 
-            var uploadResult = videosInsertRequest.UploadAsync().Result;
-            // uploadResult.Status
-
-            return video;
+            return videosInsertRequest.UploadAsync().Result;
         }
 
         private static void videosInsertRequest_ProgressChanged(IUploadProgress progress)
