@@ -40,7 +40,10 @@ namespace WindowsHelper.Tasks
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
 
-            var playlist = CreatePlaylist(currentDirectory.Name);
+            var playlist = _options.DoesPlaylistAlreadyExist
+                ? FindPlaylist(currentDirectory.Name)
+                : CreatePlaylist(currentDirectory.Name);
+            
             playListId = playlist.Id;
             
             var videosToUpload = currentDirectory.GetVideos().ToList();
@@ -56,6 +59,24 @@ namespace WindowsHelper.Tasks
             return 1;
         }
 
+        private Playlist FindPlaylist(string title)
+        {
+            Log.Information("Attempting to find playlist by title ({0})", title);
+            var playlistRequest = _youtubeService.Playlists.List("id,snippet");
+            playlistRequest.Mine = true;
+            playlistRequest.MaxResults = 1000;
+            
+            var playlistResponse = playlistRequest.Execute();
+            Log.Debug($"Playlist list response: {0}", playlistResponse);
+            var allPlaylists = playlistResponse.Items.ToList();
+            Log.Information($"Received a total of {0} playlists", allPlaylists.Count);
+            var playlist = allPlaylists.FirstOrDefault(playlist => playlist.Snippet.Title == title);
+            if (playlist == null) throw new ApplicationException($"Unable to find playlist with title {title}");
+            Log.Information("Playlist Id is {0}", playlist.Id);
+            
+            return playlist;
+        }
+        
         private Playlist CreatePlaylist(string title)
         {
             Log.Information("Creating new playlist with title {0}", title);
