@@ -177,7 +177,7 @@ namespace WindowsHelper.Tasks
 
         private void videosInsertRequest_ResponseReceived(Video video)
         {
-            Log.Information("Video id '{0}' was successfully uploaded.", video.Id);
+            Log.Information("Video id '{0}'({1}) was successfully uploaded.", video.Id, video.Snippet.Title);
             AddVideoToPlaylistAsync(video.Id).Wait();
         }
     }
