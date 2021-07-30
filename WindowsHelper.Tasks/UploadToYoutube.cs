@@ -3,10 +3,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks.Extensions;
+using WindowsHelper.Tasks.Helpers;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Upload;
@@ -20,6 +22,7 @@ namespace WindowsHelper.Tasks
     public class UploadToYoutube
     {
         private string playListId;
+        private FileInfo currentlyUploadingVideo;
         
         private readonly YouTubeService _youtubeService;
         private readonly UploadToYoutubeOptions _options;
@@ -51,6 +54,7 @@ namespace WindowsHelper.Tasks
             foreach (var videoToUpload in videosToUpload)
             {
                 Log.Information("Starting to upload {0}", videoToUpload.Name);
+                currentlyUploadingVideo = videoToUpload;
                 try
                 {
                     var (uploadProgress, uploadedVideo) = await UploadAsync(videoToUpload.FullName);
@@ -99,7 +103,7 @@ namespace WindowsHelper.Tasks
 
         private async Task<PlaylistItem> AddVideoToPlaylistAsync(string videoId)
         {
-            Log.Information("Adding video (Id: {0}) to playlist (Id: {1})", videoId, playListId);
+            Log.Information("Adding video (Id: {0}, Name: {2}) to playlist (Id: {1})", videoId, playListId, currentlyUploadingVideo.Name);
             
             var newPlaylistItem = new PlaylistItem
             {
@@ -162,15 +166,15 @@ namespace WindowsHelper.Tasks
             return (videosInsertRequest.UploadAsync().Result, video);
         }
 
-        private static void videosInsertRequest_ProgressChanged(IUploadProgress progress)
+        private void videosInsertRequest_ProgressChanged(IUploadProgress progress)
         {
             switch (progress.Status)
             {
                 case UploadStatus.Uploading:
-                    Log.Information("{0} bytes sent.", progress.BytesSent);
+                    Log.Information("{0} of {1} MB sent.", Utils.ToMb(progress.BytesSent), Utils.ToMb(currentlyUploadingVideo.Length));
                     break;
                 case UploadStatus.Failed:
-                    Log.Information("An error prevented the upload from completing.\n{0}", progress.Exception);
+                    Log.Information("An error prevented the upload of {1} from completing.\n{0}", progress.Exception, currentlyUploadingVideo.Name);
                     break;
             }
         }
