@@ -36,7 +36,7 @@ namespace WindowsHelper.Tasks
             });
         }
         
-        public async Task<int> UploadAllAsync()
+        public async Task<int> ExecuteAsync()
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
 
