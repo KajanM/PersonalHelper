@@ -131,7 +131,7 @@ namespace WindowsHelper.Tasks
                     FileMode.Open, FileAccess.Read);
 
             return GoogleWebAuthorizationBroker.AuthorizeAsync(
-                GoogleClientSecrets.Load(stream).Secrets,
+                (await GoogleClientSecrets.FromStreamAsync(stream)).Secrets,
                 new[] {YouTubeService.Scope.Youtube, YouTubeService.Scope.YoutubeUpload},
                 "user",
                 CancellationToken.None,
