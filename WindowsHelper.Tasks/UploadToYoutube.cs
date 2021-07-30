@@ -51,9 +51,15 @@ namespace WindowsHelper.Tasks
             foreach (var videoToUpload in videosToUpload)
             {
                 Log.Information("Starting to upload {0}", videoToUpload.Name);
-                var (uploadProgress, uploadedVideo) = await UploadAsync(videoToUpload.FullName);
-                Log.Information("Upload status of {0}: {1}", videoToUpload.Name, uploadProgress.Status);
-                
+                try
+                {
+                    var (uploadProgress, uploadedVideo) = await UploadAsync(videoToUpload.FullName);
+                    Log.Information("Upload status of {0}: {1}", videoToUpload.Name, uploadProgress.Status);
+                }
+                catch (Exception e)
+                {
+                    Log.Error("An error occured while uploading {0}. Exception:\n{1}", videoToUpload.Name, e);
+                }
             }
 
             return 1;
