@@ -53,7 +53,6 @@ namespace WindowsHelper.Tasks
 
             foreach (var videoToUpload in videosToUpload)
             {
-                Log.Information("Starting to upload {0}", videoToUpload.Name);
                 currentlyUploadingVideo = videoToUpload;
                 try
                 {
@@ -155,11 +154,15 @@ namespace WindowsHelper.Tasks
         
         private async Task<(IUploadProgress progress, Video video)> UploadAsync(string filePath, string description = null)
         {
+            
+            var title = Path.GetFileNameWithoutExtension(filePath);
+            Log.Information("Starting to upload\n Title: {0}\nDescription: {1}", title, description);
+            
             var video = new Video
             {
                 Snippet = new VideoSnippet
                 {
-                    Title = Path.GetFileNameWithoutExtension(filePath),
+                    Title = title,
                     Description = description,
                 },
                 Status = new VideoStatus
