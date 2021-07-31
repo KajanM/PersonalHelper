@@ -57,7 +57,8 @@ namespace WindowsHelper.Tasks
                 currentlyUploadingVideo = videoToUpload;
                 try
                 {
-                    var (uploadProgress, uploadedVideo) = await UploadAsync(videoToUpload.FullName);
+                    var description = await GetDescriptionAsync(Path.GetFileNameWithoutExtension(videoToUpload.Name));
+                    var (uploadProgress, uploadedVideo) = await UploadAsync(videoToUpload.FullName, description);
                     Log.Information("Upload status of {0}: {1}", videoToUpload.Name, uploadProgress.Status);
                 }
                 catch (Exception e)
@@ -67,6 +68,14 @@ namespace WindowsHelper.Tasks
             }
 
             return 1;
+        }
+
+        private static async Task<string> GetDescriptionAsync(string videoName)
+        {
+            var descriptionFileName = $"{videoName}.txt";
+            if (!File.Exists(descriptionFileName)) return null;
+
+            return await File.ReadAllTextAsync(descriptionFileName);
         }
 
         private Playlist FindPlaylist(string title)
@@ -144,13 +153,14 @@ namespace WindowsHelper.Tasks
         }
 
         
-        private async Task<(IUploadProgress progress, Video video)> UploadAsync(string filePath)
+        private async Task<(IUploadProgress progress, Video video)> UploadAsync(string filePath, string description = null)
         {
             var video = new Video
             {
                 Snippet = new VideoSnippet
                 {
                     Title = Path.GetFileNameWithoutExtension(filePath),
+                    Description = description,
                 },
                 Status = new VideoStatus
                 {
