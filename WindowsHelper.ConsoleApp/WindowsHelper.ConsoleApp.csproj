@@ -30,9 +30,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Config\client_secret.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
       <None Update="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
