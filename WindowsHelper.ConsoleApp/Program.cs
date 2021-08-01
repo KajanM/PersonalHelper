@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using WindowsHelper.Shared;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -26,7 +27,7 @@ namespace WindowsHelper.ConsoleApp
         private static void InitializeAppSettings()
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName))
                 .AddJsonFile("appsettings.json", optional: false);
 
             IConfiguration config = builder.Build();
