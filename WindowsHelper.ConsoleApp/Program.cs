@@ -31,7 +31,9 @@ namespace WindowsHelper.ConsoleApp
                 .AddJsonFile("appsettings.json", optional: false);
 
             IConfiguration config = builder.Build();
-            AppSettings = config.GetSection("App").Get<AppSettings>();
+            var appSettingsConfig = config.GetSection("App");
+            AppSettings = appSettingsConfig.Get<AppSettings>();
+            AppSettings.YoutubeSettings = appSettingsConfig.GetSection("Youtube").Get<YoutubeSettings>();
         }
     }
 }
