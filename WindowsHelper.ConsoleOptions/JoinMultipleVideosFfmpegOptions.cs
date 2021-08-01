@@ -24,8 +24,8 @@ namespace WindowsHelper.ConsoleOptions
 
         [Option('h', "hour-limit", Required = false,
             HelpText =
-                "Maximum hour limit to determine the number of videos to join. Set to 0 if joining all the videos. Defaults to 2 hours.")]
-        public int MaximumHourLimit { get; set; } = 2;
+                "Maximum hour limit to determine the number of videos to join. Set to 0 if joining all the videos. Defaults to 1 hour.")]
+        public int MaximumHourLimit { get; set; } = 1;
 
         [Option('e', "extension", Required = false,
             HelpText =
