@@ -24,7 +24,7 @@ namespace WindowsHelper.ConsoleApp
                     async (MoveToParentDirectoryOptions opts) => await MoveToParentDirectoryAsync(opts),
                     async (ReplaceInvalidCharsFromFileNameOptions opts) => await ReplaceInvalidCharsAsync(opts),
                     async (JoinMultipleVideosFfmpegOptions opts) => await JoinVideosFfmpegAsync(opts),
-                    async (UploadToYoutubeOptions opts) => await new UploadToYoutube(opts).ExecuteAsync(),
+                    async (UploadToYoutubeOptions opts) => await new UploadToYoutube(opts, Program.AppSettings.YoutubeSettings).ExecuteAsync(),
                     HandleParseErrorAsync);
         }
 

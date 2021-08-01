@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
+using WindowsHelper.Shared;
 using WindowsHelper.Tasks.Extensions;
 using WindowsHelper.Tasks.Helpers;
 using Google.Apis.Auth.OAuth2;
@@ -26,11 +27,13 @@ namespace WindowsHelper.Tasks
         
         private readonly YouTubeService _youtubeService;
         private readonly UploadToYoutubeOptions _options;
+        private readonly YoutubeSettings _youtubeSettings;
 
-        public UploadToYoutube(UploadToYoutubeOptions options)
+        public UploadToYoutube(UploadToYoutubeOptions options, YoutubeSettings youtubeSettings)
         {
             _options = options;
-            
+            _youtubeSettings = youtubeSettings;
+
             var credential = GetCredentialAsync().Result;
             _youtubeService = new YouTubeService(new BaseClientService.Initializer()
             {
@@ -126,24 +129,14 @@ namespace WindowsHelper.Tasks
             return newPlaylistItem;
         }
 
-        private static async Task<UserCredential> GetCredentialAsync()
+        private async Task<UserCredential> GetCredentialAsync()
         {
-            var credentialFilePath = Path.Join(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),
-                "Config",
-                "client_secret.json");
-
-            if (!File.Exists(credentialFilePath))
-            {
-                throw new ApplicationException("Please add client_secret.json to the application root");
-            }
-
-            await using var stream =
-                new FileStream(
-                    credentialFilePath,
-                    FileMode.Open, FileAccess.Read);
-
             return GoogleWebAuthorizationBroker.AuthorizeAsync(
-                (await GoogleClientSecrets.FromStreamAsync(stream)).Secrets,
+                new ClientSecrets
+                {
+                    ClientId = _youtubeSettings.ClientId,
+                    ClientSecret = _youtubeSettings.ClientSecret
+                },
                 new[] {YouTubeService.Scope.Youtube, YouTubeService.Scope.YoutubeUpload},
                 "user",
                 CancellationToken.None,

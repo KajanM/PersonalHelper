@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.ConsoleOption
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.Tests", "WindowsHelper.Tests\WindowsHelper.Tests.csproj", "{F1A76219-3810-4F82-9A7D-02D2E9C01918}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsHelper.Shared", "WindowsHelper.Shared\WindowsHelper.Shared.csproj", "{3AEB5932-9111-4EEE-A83B-FB1DEBA3C7FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{F1A76219-3810-4F82-9A7D-02D2E9C01918}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1A76219-3810-4F82-9A7D-02D2E9C01918}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1A76219-3810-4F82-9A7D-02D2E9C01918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AEB5932-9111-4EEE-A83B-FB1DEBA3C7FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AEB5932-9111-4EEE-A83B-FB1DEBA3C7FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AEB5932-9111-4EEE-A83B-FB1DEBA3C7FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AEB5932-9111-4EEE-A83B-FB1DEBA3C7FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
