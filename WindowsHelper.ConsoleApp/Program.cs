@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using WindowsHelper.Shared;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +16,7 @@ namespace WindowsHelper.ConsoleApp
             using var log = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
-                .WriteTo.File("panda.txt")
+                .WriteTo.File($"{DateTime.Now.Date:dd-MM-yyyy}.log")
                 .CreateLogger();
             Log.Logger = log;
             
