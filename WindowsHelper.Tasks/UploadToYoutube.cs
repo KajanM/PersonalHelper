@@ -180,7 +180,7 @@ namespace WindowsHelper.Tasks
                     Log.Information("{0} of {1} MB sent.", Utils.ToMb(progress.BytesSent), Utils.ToMb(currentlyUploadingVideo.Length));
                     break;
                 case UploadStatus.Failed:
-                    Log.Information("An error prevented the upload of {1} from completing.\n{0}", progress.Exception, currentlyUploadingVideo.Name);
+                    Log.Error("An error prevented the upload of {1} from completing.\n{0}", progress.Exception, currentlyUploadingVideo.Name);
                     break;
             }
         }
