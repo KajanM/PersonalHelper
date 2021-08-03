@@ -154,7 +154,6 @@ namespace WindowsHelper.Tasks
         
         private async Task<(IUploadProgress progress, Video video)> UploadAsync(string filePath, string description = null)
         {
-            
             var title = Path.GetFileNameWithoutExtension(filePath);
             Log.Information("Starting to upload\n Title: {0}\nDescription: {1}", title, description);
             
