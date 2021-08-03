@@ -35,6 +35,7 @@ namespace WindowsHelper.ConsoleApp
             var appSettingsConfig = config.GetSection("App");
             AppSettings = appSettingsConfig.Get<AppSettings>();
             AppSettings.YoutubeSettings = appSettingsConfig.GetSection("Youtube").Get<YoutubeSettings>();
+            AppSettings.NotionSettings = appSettingsConfig.GetSection("Notion").Get<NotionSettings>();
         }
     }
 }
