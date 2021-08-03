@@ -4,6 +4,7 @@ using System.IO;
 using WindowsHelper.Shared;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Serilog.Events;
 
 namespace WindowsHelper.ConsoleApp
 {
@@ -15,7 +16,7 @@ namespace WindowsHelper.ConsoleApp
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .WriteTo.Console()
+                .WriteTo.Console(LogEventLevel.Information)
                 .WriteTo.File($"{DateTime.Now.Date:dd-MM-yyyy}.log")
                 .CreateLogger();
 
