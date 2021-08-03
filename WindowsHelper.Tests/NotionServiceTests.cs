@@ -9,30 +9,26 @@ namespace WindowsHelper.Tests
     public class NotionServiceTests
     {
         private readonly ITestOutputHelper _output;
+        private readonly NotionSettings _notionSettings;
+        private readonly INotionService _notionService;
 
         public NotionServiceTests(ITestOutputHelper output)
         {
             _output = output;
+            _notionSettings = TestHelper.GetFromAppSettings<NotionSettings>("Notion");
+            _notionService = new NotionService(new NotionSettings
+            {
+                CoursesDatabaseId = _notionSettings.CoursesDatabaseId,
+                Token = _notionSettings.Token
+            });
         }
 
         [Fact]
         public async Task DescribeCoursesDatabaseAsync_ShouldSucceed_InHappyPath()
         {
-            #region Arrange
-
-            var notionSettings = TestHelper.GetFromAppSettings<NotionSettings>("Notion");
-
-            INotionService service = new NotionService(new NotionSettings
-            {
-                CoursesDatabaseId = notionSettings.CoursesDatabaseId,
-                Token = notionSettings.Token
-            });
-
-            #endregion
-
             #region Act
 
-            var coursesDatabase = await service.DescribeCoursesDatabaseAsync();
+            var coursesDatabase = await _notionService.DescribeCoursesDatabaseAsync();
 
             #endregion
 
