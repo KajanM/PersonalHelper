@@ -11,12 +11,22 @@ namespace WindowsHelper.Services.Notion.BindingModels
     
         public class Url
         {
+            public Url(string url)
+            {
+                CourseUri = url;
+            }
+            
             [JsonPropertyName("url")]
             public string CourseUri { get; set; }
         }
     
         public class DownloadUrl
         {
+            public DownloadUrl(string url)
+            {
+                Url = url;
+            }
+            
             [JsonPropertyName("url")]
             public string Url { get; set; }
         }
@@ -29,14 +39,26 @@ namespace WindowsHelper.Services.Notion.BindingModels
     
         public class Title
         {
+            public Title(string title)
+            {
+                Text = new Text
+                {
+                    Content = title
+                };
+            }
+            
             [JsonPropertyName("text")]
             public Text Text { get; set; }
         }
     
         public class Name
         {
-            [JsonPropertyName("title")]
-            public List<Title> Title { get; set; }
+            public Name(string name)
+            {
+               Title.Add(new Title(name)); 
+            }
+
+            [JsonPropertyName("title")] public List<Title> Title { get; set; } = new();
         }
     
         public class Properties
@@ -53,6 +75,21 @@ namespace WindowsHelper.Services.Notion.BindingModels
     
         public class AddNewCourseRequestBindingModel
         {
+            public AddNewCourseRequestBindingModel(string databaseId, string courseUrl, string downloadUrl, string title)
+            {
+                Parent = new Parent
+                {
+                    DatabaseId = databaseId
+                };
+
+                Properties = new Properties
+                {
+                    Url = new Url(courseUrl),
+                    DownloadUrl = new DownloadUrl(downloadUrl),
+                    Name = new Name(title)
+                };
+            }
+            
             [JsonPropertyName("parent")]
             public Parent Parent { get; set; }
     
