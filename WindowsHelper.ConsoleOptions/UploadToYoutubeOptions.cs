@@ -28,5 +28,8 @@ namespace WindowsHelper.ConsoleOptions
         
         [Option("url", Required = false, HelpText = "The URL to use when creating Notion entry.")]
         public string Url { get; set; }
+        
+        [Option('s', "shutdown", Required = false, HelpText = "Shutdown once the process is completed.")]
+        public bool DoShutDown { get; set; }
     }
 }

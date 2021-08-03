@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Services.Notion;
 using WindowsHelper.Services.Notion.BindingModels;
+using WindowsHelper.Services.Windows;
 using WindowsHelper.Shared;
 using WindowsHelper.Tasks.Extensions;
 using WindowsHelper.Tasks.Helpers;
@@ -89,6 +90,11 @@ namespace WindowsHelper.Tasks
             if (shouldAddEntryToNotion)
             {
                 await addToNotionTask;
+            }
+
+            if (_options.DoShutDown)
+            {
+                WindowsService.Shutdown();
             }
             
             return 1;
