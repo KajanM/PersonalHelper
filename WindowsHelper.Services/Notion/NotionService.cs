@@ -32,7 +32,7 @@ namespace WindowsHelper.Services.Notion
 
         public async Task<TResponse> DescribeDatabaseAsync<TResponse>(string databaseId)
         {
-            var streamTask = _client.GetStreamAsync($"https://api.notion.com/v1/databases/{databaseId}");
+            var streamTask = _client.GetStreamAsync($"databases/{databaseId}");
             var response = await JsonSerializer.DeserializeAsync<TResponse>(await streamTask);
 
             return response;
@@ -40,6 +40,7 @@ namespace WindowsHelper.Services.Notion
 
         private void InitializeHttpClient()
         {
+            _client.BaseAddress = new Uri("https://api.notion.com/v1/");
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.Token);
             _client.DefaultRequestHeaders.Add("Postman-Token", _settings.Token);
             _client.DefaultRequestHeaders.Add("Notion-Version", NotionVersion);
