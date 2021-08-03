@@ -10,19 +10,28 @@ namespace WindowsHelper.ConsoleApp
     class Program
     {
         public static AppSettings AppSettings;
-        
+
         static void Main(string[] args)
         {
-            using var log = new LoggerConfiguration()
+            Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .WriteTo.File($"{DateTime.Now.Date:dd-MM-yyyy}.log")
                 .CreateLogger();
-            Log.Logger = log;
-            
-            InitializeAppSettings();
 
-            App.Start(args);
+            try
+            {
+                InitializeAppSettings();
+                App.Start(args);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "An error occured while processing");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         private static void InitializeAppSettings()
