@@ -53,6 +53,7 @@ namespace WindowsHelper.Tasks
         public async Task<int> ExecuteAsync()
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
+            var shouldAddEntryToNotion = !_options.DoesPlaylistAlreadyExist;
             playListTitle = currentDirectory.Name;
 
             playListId = _options.PlaylistId ?? (
@@ -62,7 +63,7 @@ namespace WindowsHelper.Tasks
             );
 
             Task addToNotionTask = null;
-            if (!_options.DoesPlaylistAlreadyExist)
+            if (shouldAddEntryToNotion)
             {
                addToNotionTask = AddToNotionAsync();
             }
@@ -85,7 +86,10 @@ namespace WindowsHelper.Tasks
                 }
             }
 
-            await addToNotionTask;
+            if (shouldAddEntryToNotion)
+            {
+                await addToNotionTask;
+            }
             
             return 1;
         }
