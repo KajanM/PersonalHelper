@@ -6,10 +6,9 @@ namespace WindowsHelper.Services.Notion
 {
     public interface INotionService
     {
-        Task<AddNewCourseResponseBindingModel> AddCourseEntryAsync(string databaseId,
-            AddNewCourseRequestBindingModel requestBody);
+        Task<AddNewCourseResponseBindingModel> AddCourseEntryAsync(AddNewCourseRequestBindingModel requestBody);
         Task<DescribeDatabaseResponse> DescribeCoursesDatabaseAsync();
         Task<TResponse> DescribeDatabaseAsync<TResponse>(string databaseId);
-        Task<TResponse> CreatePageAsync<TBody, TResponse>(string databaseId, TBody requestBody);
+        Task<TResponse> CreatePageAsync<TBody, TResponse>(TBody requestBody);
     }
 }

@@ -28,19 +28,17 @@ namespace WindowsHelper.Services.Notion
             InitializeHttpClient();
         }
 
-        public async Task<AddNewCourseResponseBindingModel> AddCourseEntryAsync(string databaseId,
+        public async Task<AddNewCourseResponseBindingModel> AddCourseEntryAsync(
             AddNewCourseRequestBindingModel requestBody)
         {
-            if (string.IsNullOrWhiteSpace(databaseId)) throw new ArgumentNullException(nameof(databaseId));
-
-            return await CreatePageAsync<AddNewCourseRequestBindingModel, AddNewCourseResponseBindingModel>(databaseId, requestBody);
+            return await CreatePageAsync<AddNewCourseRequestBindingModel, AddNewCourseResponseBindingModel>(requestBody);
         }
         
-        public async Task<TResponse> CreatePageAsync<TBody, TResponse>(string databaseId, TBody requestBody)
+        public async Task<TResponse> CreatePageAsync<TBody, TResponse>(TBody requestBody)
         {
-            Log.Debug("Trying to add new Notion page {DatabaseId} {@Body}", databaseId, requestBody);
+            Log.Debug("Trying to add new Notion page {@Body}", requestBody);
             var response = await _client.PostAsync("pages", new JsonContent(requestBody));
-            Log.Debug("Received response to add new Notion page {DatabaseId} {@Response}", databaseId, response);
+            Log.Debug("Received response to add new Notion page {@Response}", response);
 
             return await JsonSerializer.DeserializeAsync<TResponse>(await response.Content.ReadAsStreamAsync());
         }
