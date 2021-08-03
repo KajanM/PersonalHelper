@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WindowsHelper.ConsoleOptions\WindowsHelper.ConsoleOptions.csproj" />
+      <ProjectReference Include="..\WindowsHelper.Services\WindowsHelper.Services.csproj" />
       <ProjectReference Include="..\WindowsHelper.Shared\WindowsHelper.Shared.csproj" />
     </ItemGroup>
 
