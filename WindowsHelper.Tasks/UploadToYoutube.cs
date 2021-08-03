@@ -66,7 +66,7 @@ namespace WindowsHelper.Tasks
                 currentlyUploadingVideo = videoToUpload;
                 try
                 {
-                    var description = await GetDescriptionAsync(Path.GetFileNameWithoutExtension(videoToUpload.Name));
+                    var description = GetDescriptionAsync(Path.GetFileNameWithoutExtension(videoToUpload.Name)).Result;
                     var (uploadProgress, uploadedVideo) = await UploadAsync(videoToUpload.FullName, description);
                     Log.Information("Upload status of {0}: {1}", videoToUpload.Name, uploadProgress.Status);
                 }
