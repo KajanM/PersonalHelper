@@ -53,6 +53,7 @@ namespace WindowsHelper.Tasks
             );
             
             var videosToUpload = currentDirectory.GetVideos().ToList();
+            Log.Information("Found {0} videos to upload", videosToUpload.Count);
 
             foreach (var videoToUpload in videosToUpload)
             {
