@@ -95,7 +95,7 @@ namespace WindowsHelper.Tasks
             playlistRequest.MaxResults = 1000;
             
             var playlistResponse = playlistRequest.Execute();
-            Log.Debug("Playlist list response: {0}", playlistResponse);
+            Log.Debug("Playlist list response: {@0}", playlistResponse);
             var allPlaylists = playlistResponse.Items.ToList();
             Log.Information("Received a total of {0} playlists", allPlaylists.Count);
             var playlist = allPlaylists.FirstOrDefault(playlist => playlist.Snippet.Title == title);
