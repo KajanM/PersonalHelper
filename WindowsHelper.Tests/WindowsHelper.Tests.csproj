@@ -14,6 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WindowsHelper.ConsoleApp\WindowsHelper.ConsoleApp.csproj" />
+      <ProjectReference Include="..\WindowsHelper.Services\WindowsHelper.Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -21,6 +22,9 @@
       <EmbeddedResource Include="resources\dont-worry.mp4">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </EmbeddedResource>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
