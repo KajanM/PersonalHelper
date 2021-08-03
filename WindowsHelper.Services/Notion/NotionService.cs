@@ -42,7 +42,6 @@ namespace WindowsHelper.Services.Notion
         {
             _client.BaseAddress = new Uri("https://api.notion.com/v1/");
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.Token);
-            _client.DefaultRequestHeaders.Add("Postman-Token", _settings.Token);
             _client.DefaultRequestHeaders.Add("Notion-Version", NotionVersion);
         }
     }
