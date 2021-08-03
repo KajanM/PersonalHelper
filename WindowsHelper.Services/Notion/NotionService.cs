@@ -3,8 +3,11 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Threading.Tasks;
+using WindowsHelper.Services.Helpers.Http;
+using WindowsHelper.Services.Notion.BindingModels;
 using WindowsHelper.Shared;
 using WindowsHelper.Shared.Notion.ResponseViewModel;
+using Serilog;
 
 namespace WindowsHelper.Services.Notion
 {
@@ -23,6 +26,23 @@ namespace WindowsHelper.Services.Notion
             _settings = settings;
             _client = new HttpClient();
             InitializeHttpClient();
+        }
+
+        public async Task<AddNewCourseResponseBindingModel> AddCourseEntryAsync(string databaseId,
+            AddNewCourseRequestBindingModel requestBody)
+        {
+            if (string.IsNullOrWhiteSpace(databaseId)) throw new ArgumentNullException(nameof(databaseId));
+
+            return await CreatePageAsync<AddNewCourseRequestBindingModel, AddNewCourseResponseBindingModel>(databaseId, requestBody);
+        }
+        
+        public async Task<TResponse> CreatePageAsync<TBody, TResponse>(string databaseId, TBody requestBody)
+        {
+            Log.Debug("Trying to add new Notion page {DatabaseId} {@Body}", databaseId, requestBody);
+            var response = await _client.PostAsync("pages", new JsonContent(requestBody));
+            Log.Debug("Received response to add new Notion page {DatabaseId} {@Response}", databaseId, response);
+
+            return await JsonSerializer.DeserializeAsync<TResponse>(await response.Content.ReadAsStreamAsync());
         }
 
         public async Task<DescribeDatabaseResponse> DescribeCoursesDatabaseAsync()
