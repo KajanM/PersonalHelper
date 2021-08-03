@@ -10,6 +10,11 @@ namespace WindowsHelper.Tests
     {
         private readonly ITestOutputHelper _output;
 
+        public NotionServiceTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public async Task DescribeCoursesDatabaseAsync_ShouldSucceed_InHappyPath()
         {
