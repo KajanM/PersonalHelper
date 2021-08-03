@@ -25,5 +25,8 @@ namespace WindowsHelper.ConsoleOptions
         
         [Option("pl-id", Required = false, HelpText = "Playlist Id. Optional.")]
         public string PlaylistId { get; set; }
+        
+        [Option("url", Required = false, HelpText = "The URL to use when creating Notion entry.")]
+        public string Url { get; set; }
     }
 }

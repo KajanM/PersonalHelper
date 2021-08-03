@@ -7,6 +7,8 @@ using System.Runtime.Serialization.Formatters;
 using System.Threading;
 using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
+using WindowsHelper.Services.Notion;
+using WindowsHelper.Services.Notion.BindingModels;
 using WindowsHelper.Shared;
 using WindowsHelper.Tasks.Extensions;
 using WindowsHelper.Tasks.Helpers;
@@ -23,16 +25,20 @@ namespace WindowsHelper.Tasks
     public class UploadToYoutube
     {
         private string playListId;
+        private string playListTitle;
         private FileInfo currentlyUploadingVideo;
         
         private readonly YouTubeService _youtubeService;
         private readonly UploadToYoutubeOptions _options;
         private readonly YoutubeSettings _youtubeSettings;
+        private readonly INotionService _notionService;
+        private readonly NotionSettings _notionSettings;
 
-        public UploadToYoutube(UploadToYoutubeOptions options, YoutubeSettings youtubeSettings)
+        public UploadToYoutube(UploadToYoutubeOptions options, YoutubeSettings youtubeSettings, NotionSettings notionSettings)
         {
             _options = options;
             _youtubeSettings = youtubeSettings;
+            _notionSettings = notionSettings;
 
             var credential = GetCredentialAsync().Result;
             _youtubeService = new YouTubeService(new BaseClientService.Initializer()
@@ -40,17 +46,26 @@ namespace WindowsHelper.Tasks
                 HttpClientInitializer = credential,
                 ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
             });
+
+            _notionService = new NotionService(_notionSettings);
         }
         
         public async Task<int> ExecuteAsync()
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
+            playListTitle = currentDirectory.Name;
 
             playListId = _options.PlaylistId ?? (
                 _options.DoesPlaylistAlreadyExist
-                    ? FindPlaylist(currentDirectory.Name).Id
-                    : CreatePlaylist(currentDirectory.Name).Id
+                    ? FindPlaylist(playListTitle).Id
+                    : CreatePlaylist(playListTitle).Id
             );
+
+            Task addToNotionTask = null;
+            if (!_options.DoesPlaylistAlreadyExist)
+            {
+               addToNotionTask = AddToNotionAsync();
+            }
             
             var videosToUpload = currentDirectory.GetVideos().ToList();
             Log.Information("Found {0} videos to upload", videosToUpload.Count);
@@ -70,7 +85,25 @@ namespace WindowsHelper.Tasks
                 }
             }
 
+            await addToNotionTask;
+            
             return 1;
+        }
+
+        private async Task AddToNotionAsync()
+        {
+            if (string.IsNullOrWhiteSpace(playListId))
+            {
+                Log.Warning("Skipping adding entry to Notion since playlist-id is not initialized");
+                return;
+            }
+
+            await _notionService.AddCourseEntryAsync(new AddNewCourseRequestBindingModel(
+                _notionSettings.CoursesDatabaseId,
+                _options.Url,
+                $"https://www.youtube.com/playlist?list={playListId}",
+                playListTitle
+            ));
         }
 
         private static async Task<string> GetDescriptionAsync(string videoName)
