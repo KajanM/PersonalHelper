@@ -46,11 +46,18 @@ namespace WindowsHelper.Tasks
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
 
-            var playlist = _options.DoesPlaylistAlreadyExist
-                ? FindPlaylist(currentDirectory.Name)
-                : CreatePlaylist(currentDirectory.Name);
-            
-            playListId = playlist.Id;
+            if (string.IsNullOrWhiteSpace(_options.PlaylistId))
+            {
+                var playlist = _options.DoesPlaylistAlreadyExist
+                    ? FindPlaylist(currentDirectory.Name)
+                    : CreatePlaylist(currentDirectory.Name);
+
+                playListId = playlist.Id;
+            }
+            else
+            {
+                playListId = _options.PlaylistId;
+            }
             
             var videosToUpload = currentDirectory.GetVideos().ToList();
 
