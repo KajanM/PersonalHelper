@@ -5,6 +5,8 @@
         public YoutubeSettings YoutubeSettings { get; set; }
         
         public NotionSettings NotionSettings { get; set; }
+
+        public SentrySettings SentrySettings { get; set; }
     }
 
     public class YoutubeSettings
@@ -18,5 +20,10 @@
         public string Token { get; set; }
         
         public string CoursesDatabaseId { get; set; }
+    }
+
+    public class SentrySettings
+    {
+        public string Dsn { get; set; }
     }
 }

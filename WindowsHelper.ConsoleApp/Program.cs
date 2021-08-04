@@ -14,15 +14,11 @@ namespace WindowsHelper.ConsoleApp
 
         static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console(LogEventLevel.Information)
-                .WriteTo.File($"{DateTime.Now.Date:dd-MM-yyyy}.log")
-                .CreateLogger();
-
             try
             {
                 InitializeAppSettings();
+                SetUpLogging();
+                
                 App.Start(args);
             }
             catch (Exception e)
@@ -33,6 +29,21 @@ namespace WindowsHelper.ConsoleApp
             {
                 Log.CloseAndFlush();
             }
+        }
+
+        private static void SetUpLogging()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console(LogEventLevel.Information)
+                .WriteTo.File($"{DateTime.Now.Date:dd-MM-yyyy}.log")
+                .WriteTo.Sentry(o =>
+                {
+                    o.Dsn = AppSettings.SentrySettings.Dsn;
+                    o.MinimumBreadcrumbLevel = LogEventLevel.Warning;
+                    o.MinimumEventLevel = LogEventLevel.Error;
+                })
+                .CreateLogger();
         }
 
         private static void InitializeAppSettings()
@@ -46,6 +57,7 @@ namespace WindowsHelper.ConsoleApp
             AppSettings = appSettingsConfig.Get<AppSettings>();
             AppSettings.YoutubeSettings = appSettingsConfig.GetSection("Youtube").Get<YoutubeSettings>();
             AppSettings.NotionSettings = appSettingsConfig.GetSection("Notion").Get<NotionSettings>();
+            AppSettings.SentrySettings = appSettingsConfig.GetSection("Sentry").Get<SentrySettings>();
         }
     }
 }
