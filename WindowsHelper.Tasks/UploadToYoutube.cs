@@ -175,20 +175,38 @@ namespace WindowsHelper.Tasks
 
         private async Task<UserCredential> GetCredentialAsync()
         {
+            var credential = PickCredentialsFromSettings();
+
+            if (string.IsNullOrWhiteSpace(credential?.ClientId))
+                throw new ArgumentNullException($"Youtube credentials not initialized for {_options.KeyPairToUse}");
+
             return GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
                 {
-                    ClientId = _youtubeSettings.ClientId,
-                    ClientSecret = _youtubeSettings.ClientSecret
+                    ClientId = credential.ClientId,
+                    ClientSecret = credential.ClientSecret
                 },
                 new[] {YouTubeService.Scope.Youtube, YouTubeService.Scope.YoutubeUpload},
                 "user",
                 CancellationToken.None,
-                new FileDataStore(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName))
+                new FileDataStore(Path.Join(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),
+                    _options.KeyPairToUse.ToString()))
             ).Result;
         }
 
-        
+        private YoutubeCredentials PickCredentialsFromSettings()
+        {
+            YoutubeCredentials credential = _options.KeyPairToUse switch
+            {
+                YoutubeKeyPair.KeyPairOne => _youtubeSettings.KeyPairOne,
+                YoutubeKeyPair.KeyPairTwo => _youtubeSettings.KeyPairTwo,
+                _ => null
+            };
+
+            return credential;
+        }
+
+
         private async Task<(IUploadProgress progress, Video video)> UploadAsync(string filePath, string description = null)
         {
             var title = Path.GetFileNameWithoutExtension(filePath);

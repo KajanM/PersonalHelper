@@ -11,6 +11,13 @@
 
     public class YoutubeSettings
     {
+        public YoutubeCredentials KeyPairOne { get; set; }
+        
+        public YoutubeCredentials KeyPairTwo { get; set; }
+    }
+
+    public class YoutubeCredentials
+    {
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
     }

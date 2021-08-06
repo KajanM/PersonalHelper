@@ -3,6 +3,12 @@ using CommandLine;
 
 namespace WindowsHelper.ConsoleOptions
 {
+    public enum YoutubeKeyPair
+    {
+        KeyPairOne,
+        KeyPairTwo
+    }
+    
     [Verb("upload",
         HelpText =
             "Upload videos in the current directory to youtube, playlist will be created based on the directory name.")]
@@ -31,5 +37,8 @@ namespace WindowsHelper.ConsoleOptions
         
         [Option('s', "shutdown", Required = false, HelpText = "Shutdown once the process is completed.")]
         public bool DoShutDown { get; set; }
+
+        [Option('k', "key", Required = false, HelpText = "Which key pair file to use. Defaults to KeyPairOne")]
+        public YoutubeKeyPair KeyPairToUse { get; set; } = YoutubeKeyPair.KeyPairTwo;
     }
 }
