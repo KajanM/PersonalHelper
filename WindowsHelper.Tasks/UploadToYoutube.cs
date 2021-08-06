@@ -47,6 +47,7 @@ namespace WindowsHelper.Tasks
                 HttpClientInitializer = credential,
                 ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
             });
+            _youtubeService.HttpClient.Timeout = TimeSpan.FromMinutes(3);
 
             _notionService = new NotionService(_notionSettings);
         }
