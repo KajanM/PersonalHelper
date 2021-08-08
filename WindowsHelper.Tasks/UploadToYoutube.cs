@@ -3,16 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters;
 using System.Threading;
 using System.Threading.Tasks;
-using WindowsHelper.ConsoleOptions;
-using WindowsHelper.Services.Notion;
-using WindowsHelper.Services.Notion.BindingModels;
-using WindowsHelper.Services.Windows;
-using WindowsHelper.Shared;
-using WindowsHelper.Tasks.Extensions;
-using WindowsHelper.Tasks.Helpers;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Upload;
@@ -20,14 +12,21 @@ using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using Serilog;
+using WindowsHelper.ConsoleOptions;
+using WindowsHelper.Services.Notion;
+using WindowsHelper.Services.Notion.BindingModels;
+using WindowsHelper.Services.Windows;
+using WindowsHelper.Shared;
+using WindowsHelper.Tasks.Extensions;
+using WindowsHelper.Tasks.Helpers;
 
 namespace WindowsHelper.Tasks
 {
     public class UploadToYoutube
     {
-        private string playListId;
-        private string playListTitle;
-        private FileInfo currentlyUploadingVideo;
+        private string _playListId;
+        private string _playListTitle;
+        private FileInfo _currentlyUploadingVideo;
         
         private readonly YouTubeService _youtubeService;
         private readonly UploadToYoutubeOptions _options;
@@ -56,12 +55,12 @@ namespace WindowsHelper.Tasks
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
             var shouldAddEntryToNotion = !_options.DoesPlaylistAlreadyExist;
-            playListTitle = currentDirectory.Name;
+            _playListTitle = currentDirectory.Name;
 
-            playListId = _options.PlaylistId ?? (
+            _playListId = _options.PlaylistId ?? (
                 _options.DoesPlaylistAlreadyExist
-                    ? FindPlaylist(playListTitle).Id
-                    : CreatePlaylist(playListTitle).Id
+                    ? FindPlaylist(_playListTitle).Id
+                    : CreatePlaylist(_playListTitle).Id
             );
 
             Task addToNotionTask = null;
@@ -75,11 +74,11 @@ namespace WindowsHelper.Tasks
 
             foreach (var videoToUpload in videosToUpload)
             {
-                currentlyUploadingVideo = videoToUpload;
+                _currentlyUploadingVideo = videoToUpload;
                 try
                 {
                     var description = GetDescriptionAsync(Path.GetFileNameWithoutExtension(videoToUpload.Name)).Result;
-                    var (uploadProgress, uploadedVideo) = await UploadAsync(videoToUpload.FullName, description);
+                    var (uploadProgress, _) = await UploadAsync(videoToUpload.FullName, description);
                     Log.Information("Upload status of {0}: {1}", videoToUpload.Name, uploadProgress.Status);
                 }
                 catch (Exception e)
@@ -103,7 +102,7 @@ namespace WindowsHelper.Tasks
 
         private async Task AddToNotionAsync()
         {
-            if (string.IsNullOrWhiteSpace(playListId))
+            if (string.IsNullOrWhiteSpace(_playListId))
             {
                 Log.Warning("Skipping adding entry to Notion since playlist-id is not initialized");
                 return;
@@ -112,8 +111,8 @@ namespace WindowsHelper.Tasks
             await _notionService.AddCourseEntryAsync(new AddNewCourseRequestBindingModel(
                 _notionSettings.CoursesDatabaseId,
                 _options.Url,
-                $"https://www.youtube.com/playlist?list={playListId}",
-                playListTitle
+                $"https://www.youtube.com/playlist?list={_playListId}",
+                _playListTitle
             ));
         }
 
@@ -159,13 +158,13 @@ namespace WindowsHelper.Tasks
 
         private async Task<PlaylistItem> AddVideoToPlaylistAsync(string videoId)
         {
-            Log.Information("Adding video (Id: {0}, Name: {2}) to playlist (Id: {1})", videoId, playListId, currentlyUploadingVideo.Name);
+            Log.Information("Adding video (Id: {0}, Name: {2}) to playlist (Id: {1})", videoId, _playListId, _currentlyUploadingVideo.Name);
             
             var newPlaylistItem = new PlaylistItem
             {
                 Snippet = new PlaylistItemSnippet
                 {
-                    PlaylistId = playListId,
+                    PlaylistId = _playListId,
                     ResourceId = new ResourceId {Kind = "youtube#video", VideoId = videoId}
                 }
             };
@@ -239,10 +238,10 @@ namespace WindowsHelper.Tasks
             switch (progress.Status)
             {
                 case UploadStatus.Uploading:
-                    Log.Information("{0} of {1} MB sent.", Utils.ToMb(progress.BytesSent), Utils.ToMb(currentlyUploadingVideo.Length));
+                    Log.Information("{0} of {1} MB sent.", Utils.ToMb(progress.BytesSent), Utils.ToMb(_currentlyUploadingVideo.Length));
                     break;
                 case UploadStatus.Failed:
-                    Log.Error("An error prevented the upload of {1} from completing.\n{0}", progress.Exception, currentlyUploadingVideo.Name);
+                    Log.Error("An error prevented the upload of {1} from completing.\n{0}", progress.Exception, _currentlyUploadingVideo.Name);
                     break;
             }
         }

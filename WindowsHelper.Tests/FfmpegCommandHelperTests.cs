@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using WindowsHelper.Tasks.Helpers;
-using CliWrap;
-using CliWrap.Buffered;
 using Xunit;
 using Xunit.Abstractions;
 

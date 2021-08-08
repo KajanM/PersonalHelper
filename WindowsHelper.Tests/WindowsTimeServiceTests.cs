@@ -1,4 +1,3 @@
-using System;
 using WindowsHelper.ConsoleApp;
 using Xunit;
 
