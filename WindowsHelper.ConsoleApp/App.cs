@@ -31,7 +31,7 @@ namespace WindowsHelper.ConsoleApp
 
         static async Task<int> HandleParseErrorAsync(IEnumerable<Error> errs)
         {
-            Log.Information(string.Join(Environment.NewLine, errs));
+            Log.Error(string.Join(Environment.NewLine, errs));
             Console.ReadLine();
 
             return -1;
