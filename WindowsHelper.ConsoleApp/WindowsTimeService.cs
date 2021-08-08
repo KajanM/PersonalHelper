@@ -37,6 +37,23 @@ namespace WindowsHelper.ConsoleApp
             return await JsonSerializer.DeserializeAsync<TimeApiResponse>(stream);
         }
 
+        public static async Task<int> ExecuteAsync(ChangeSystemTimeOptions options)
+        {
+            try
+            {
+                var isSuccess = options.IsReset
+                    ? await ResetTime(options)
+                    : ChangeTime(options);
+
+                return isSuccess ? 1 : -1;
+            }
+            catch (Exception e)
+            {
+                Log.Error("Unable to change the system time. {@opts} Exception: {e}", options, e);
+                return -1;
+            }
+        }
+
         public async static Task<bool> ResetTime(ChangeSystemTimeOptions options)
         {
             Log.Information($"Fetching UTC time from {UtcTimeApi}");
