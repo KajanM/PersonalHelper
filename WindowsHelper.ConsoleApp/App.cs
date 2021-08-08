@@ -10,9 +10,9 @@ namespace WindowsHelper.ConsoleApp
 {
     public static class App
     {
-        public static async Task Start(string[] args)
+        public static async Task StartAsync(string[] args)
         {
-            Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions,
+            await Parser.Default.ParseArguments<AppendNumberToFilesOptions, ChangeSystemTimeOptions,
                     MoveToParentDirectoryOptions,
                     ReplaceInvalidCharsFromFileNameOptions,
                     JoinMultipleVideosFfmpegOptions,

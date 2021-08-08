@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using WindowsHelper.Shared;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -12,14 +13,14 @@ namespace WindowsHelper.ConsoleApp
     {
         public static AppSettings AppSettings;
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             try
             {
                 InitializeAppSettings();
                 SetUpLogging();
                 
-                App.Start(args);
+                await App.StartAsync(args);
             }
             catch (Exception e)
             {
