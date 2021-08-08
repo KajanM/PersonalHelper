@@ -29,7 +29,7 @@ namespace WindowsHelper.Tasks
         private FileInfo _currentlyUploadingVideo;
         
         private readonly YouTubeService _youtubeService;
-        private readonly UploadToYoutubeOptions _options;
+        private UploadToYoutubeOptions _options;
         private readonly YoutubeSettings _youtubeSettings;
         private readonly INotionService _notionService;
         private readonly NotionSettings _notionSettings;
@@ -54,6 +54,10 @@ namespace WindowsHelper.Tasks
         public async Task<int> ExecuteAsync()
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
+            // take options from the meta file if exists
+            _options = await GetOptionsFromMetaFileAsync(Path.Join(_options.Path,
+                           GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName))
+                       ?? _options;
             var shouldAddEntryToNotion = !_options.DoesPlaylistAlreadyExist;
             _playListTitle = currentDirectory.Name;
 
@@ -98,6 +102,13 @@ namespace WindowsHelper.Tasks
             }
             
             return 1;
+        }
+
+        private static async Task<UploadToYoutubeOptions> GetOptionsFromMetaFileAsync(string metaFilePath)
+        {
+            if (!File.Exists(metaFilePath)) return null;
+
+            return (await File.ReadAllTextAsync(metaFilePath)).DeserializeYaml<UploadToYoutubeOptions>();
         }
 
         private async Task AddToNotionAsync()
