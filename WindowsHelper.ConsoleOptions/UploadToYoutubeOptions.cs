@@ -39,6 +39,6 @@ namespace WindowsHelper.ConsoleOptions
         public bool DoShutDown { get; set; }
 
         [Option('k', "key", Required = false, HelpText = "Which key pair file to use. Defaults to KeyPairOne")]
-        public YoutubeKeyPair KeyPairToUse { get; set; } = YoutubeKeyPair.KeyPairTwo;
+        public YoutubeKeyPair KeyPairToUse { get; set; } = YoutubeKeyPair.KeyPairOne;
     }
 }
