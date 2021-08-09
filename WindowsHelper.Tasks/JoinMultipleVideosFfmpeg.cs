@@ -24,6 +24,7 @@ namespace WindowsHelper.Tasks
         public async Task JoinAsync()
         {
             var directory = new DirectoryInfo(_options.Path);
+            _options.OutputExtension ??= DetermineOutputExtension(directory);
 
             if (!_options.IsFileListAlreadyExist)
             {
@@ -46,6 +47,14 @@ namespace WindowsHelper.Tasks
             {
                 Log.Information($"An error occured while joining the videos.{Environment.NewLine}{e}");
             }
+        }
+
+        private static string DetermineOutputExtension(DirectoryInfo directory)
+        {
+            var video = directory.GetVideos().FirstOrDefault();
+            if(video == null) throw new InvalidOperationException("No video files found to automatically determine the output extension");
+
+            return Path.GetExtension(video.Name)[1..];
         }
 
         private async Task GenerateTextFilesToBeConsumedByFfmpegAsync(DirectoryInfo directory)

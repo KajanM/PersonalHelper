@@ -29,8 +29,8 @@ namespace WindowsHelper.ConsoleOptions
 
         [Option('e', "extension", Required = false,
             HelpText =
-                "The output extension. Defaults to mp4")]
-        public string OutputExtension { get; set; } = "mp4";
+                "The output extension. If not specified, will be automatically set to the extension of a video in the directory.")]
+        public string OutputExtension { get; set; }
 
         [Option('d', "dry", Required = false,
             HelpText = "Prints the expected change without really affecting the file system")]
