@@ -8,6 +8,7 @@ namespace WindowsHelper.Tasks
     public class MoveToParentDirectory
     {
         private readonly MoveToParentDirectoryOptions _options;
+        private int directoryNumber = 0;
 
         public MoveToParentDirectory(MoveToParentDirectoryOptions options)
         {
@@ -27,10 +28,11 @@ namespace WindowsHelper.Tasks
         {
             foreach (var subDirectory in directory.GetDirectories())
             {
+                directoryNumber += 1;
                 foreach (var file in subDirectory.GetFiles())
                 {
                     var moveToPath = Path.Join(_options.Path,
-                        string.Join("_", file.Name.Split(Path.GetInvalidFileNameChars())));
+                        $"{directoryNumber}-{string.Join("_", file.Name.Split(Path.GetInvalidFileNameChars()))}");
 
                     if (_options.IsDryRun)
                     {
