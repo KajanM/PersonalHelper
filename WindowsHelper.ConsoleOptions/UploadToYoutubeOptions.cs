@@ -15,6 +15,7 @@ namespace WindowsHelper.ConsoleOptions
     public class UploadToYoutubeOptions
     {
         private bool _doesPlaylistAlreadyExist;
+        private bool _shouldAddEntryToNotion;
         
         [Option('p', "path", Required = false, HelpText = "Path to perform action. Defaults to the current directory")]
         public string Path { get; set; } = Environment.CurrentDirectory;
@@ -34,6 +35,13 @@ namespace WindowsHelper.ConsoleOptions
         
         [Option("url", Required = false, HelpText = "The URL to use when creating Notion entry.")]
         public string Url { get; set; }
+        
+        [Option('n', "notion", Required = false, HelpText = "Should add entry to notion?")]
+        public bool ShouldAddEntryToNotion
+        {
+            get => _shouldAddEntryToNotion || !DoesPlaylistAlreadyExist;
+            set => _shouldAddEntryToNotion = value;
+        }
         
         [Option('s', "shutdown", Required = false, HelpText = "Shutdown once the process is completed.")]
         public bool DoShutDown { get; set; }

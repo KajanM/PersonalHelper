@@ -58,7 +58,6 @@ namespace WindowsHelper.Tasks
             _options = await GetOptionsFromMetaFileAsync(Path.Join(_options.Path,
                            GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName))
                        ?? _options;
-            var shouldAddEntryToNotion = !_options.DoesPlaylistAlreadyExist;
             _playListTitle = currentDirectory.Name;
 
             _playListId = _options.PlaylistId ?? (
@@ -68,7 +67,7 @@ namespace WindowsHelper.Tasks
             );
 
             Task addToNotionTask = null;
-            if (shouldAddEntryToNotion)
+            if (_options.ShouldAddEntryToNotion)
             {
                addToNotionTask = AddToNotionAsync();
             }
@@ -91,7 +90,7 @@ namespace WindowsHelper.Tasks
                 }
             }
 
-            if (shouldAddEntryToNotion)
+            if (_options.ShouldAddEntryToNotion)
             {
                 await addToNotionTask;
             }
