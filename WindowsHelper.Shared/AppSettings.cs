@@ -14,6 +14,8 @@
         public YoutubeCredentials KeyPairOne { get; set; }
         
         public YoutubeCredentials KeyPairTwo { get; set; }
+        
+        public YoutubeCredentials KeyPairThree { get; set; }
     }
 
     public class YoutubeCredentials

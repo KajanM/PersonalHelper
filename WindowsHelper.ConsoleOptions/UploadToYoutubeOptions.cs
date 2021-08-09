@@ -6,7 +6,8 @@ namespace WindowsHelper.ConsoleOptions
     public enum YoutubeKeyPair
     {
         KeyPairOne,
-        KeyPairTwo
+        KeyPairTwo,
+        KeyPairThree,
     }
     
     [Verb("upload",

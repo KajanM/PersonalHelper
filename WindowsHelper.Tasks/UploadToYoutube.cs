@@ -36,7 +36,11 @@ namespace WindowsHelper.Tasks
 
         public UploadToYoutube(UploadToYoutubeOptions options, YoutubeSettings youtubeSettings, NotionSettings notionSettings)
         {
-            _options = options;
+            // take options from the meta file if exists
+            _options = GetOptionsFromMetaFileAsync(Path.Join(options.Path,
+                           GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result
+                       ?? options;
+            
             _youtubeSettings = youtubeSettings;
             _notionSettings = notionSettings;
 
@@ -54,10 +58,6 @@ namespace WindowsHelper.Tasks
         public async Task<int> ExecuteAsync()
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
-            // take options from the meta file if exists
-            _options = await GetOptionsFromMetaFileAsync(Path.Join(_options.Path,
-                           GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName))
-                       ?? _options;
             _playListTitle = currentDirectory.Name;
 
             _playListId = _options.PlaylistId ?? (
@@ -210,6 +210,7 @@ namespace WindowsHelper.Tasks
             {
                 YoutubeKeyPair.KeyPairOne => _youtubeSettings.KeyPairOne,
                 YoutubeKeyPair.KeyPairTwo => _youtubeSettings.KeyPairTwo,
+                YoutubeKeyPair.KeyPairThree => _youtubeSettings.KeyPairThree,
                 _ => null
             };
 
