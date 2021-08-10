@@ -212,9 +212,9 @@ namespace WindowsHelper.Tasks
             ));
         }
 
-        private static async Task<string> GetDescriptionAsync(string videoName)
+        private async Task<string> GetDescriptionAsync(string videoName)
         {
-            var descriptionFileName = $"{videoName}.txt";
+            var descriptionFileName = Path.Join(_options.Path, $"{videoName}.txt");
             if (!File.Exists(descriptionFileName)) return null;
 
             return await File.ReadAllTextAsync(descriptionFileName);
