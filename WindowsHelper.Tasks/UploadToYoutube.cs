@@ -73,7 +73,7 @@ namespace WindowsHelper.Tasks
             }
             
             var videosToUpload = currentDirectory.GetVideos().ToList();
-            Log.Information("Found {0} videos to upload", videosToUpload.Count);
+            Log.Information("Found {VideosCount} videos to upload", videosToUpload.Count);
 
             foreach (var videoToUpload in videosToUpload)
             {
@@ -82,11 +82,11 @@ namespace WindowsHelper.Tasks
                 {
                     var description = GetDescriptionAsync(Path.GetFileNameWithoutExtension(videoToUpload.Name)).Result;
                     var (uploadProgress, _) = await UploadAsync(videoToUpload.FullName, description);
-                    Log.Information("Upload status of {0}: {1}", videoToUpload.Name, uploadProgress.Status);
+                    Log.Information("Upload status of {VideoName}: {UploadStatus}", videoToUpload.Name, uploadProgress.Status);
                 }
                 catch (Exception e)
                 {
-                    Log.Error("An error occured while uploading {0}. Exception:\n{1}", videoToUpload.Name, e);
+                    Log.Error("An error occured while uploading {VideoName}. Exception:\n{@Exception}", videoToUpload.Name, e);
                 }
             }
 
@@ -142,33 +142,34 @@ namespace WindowsHelper.Tasks
             playlistRequest.MaxResults = 1000;
             
             var playlistResponse = playlistRequest.Execute();
-            Log.Debug("Playlist list response: {@0}", playlistResponse);
+            Log.Debug("Playlist list response: {@PlaylistResponse}", playlistResponse);
             var allPlaylists = playlistResponse.Items.ToList();
-            Log.Information("Received a total of {0} playlists", allPlaylists.Count);
+            Log.Information("Received a total of {PlaylistCount} playlists", allPlaylists.Count);
             var playlist = allPlaylists.FirstOrDefault(playlist => playlist.Snippet.Title == title);
             if (playlist == null) throw new ApplicationException($"Unable to find playlist with title {title}");
-            Log.Information("Playlist Id is {0}", playlist.Id);
+            Log.Information("Playlist Id is {PlaylistId}", playlist.Id);
             
             return playlist;
         }
         
         private Playlist CreatePlaylist(string title)
         {
-            Log.Information("Creating new playlist with title {0}", title);
+            Log.Information("Creating new playlist with title {Title}", title);
             var newPlaylist = new Playlist
             {
                 Snippet = new PlaylistSnippet {Title = title},
                 Status = new PlaylistStatus {PrivacyStatus = "private"}
             };
             newPlaylist = _youtubeService.Playlists.Insert(newPlaylist, "snippet,status").Execute();
-            Log.Information("Successfully created playlist. Id: {0}", newPlaylist.Id);
+            Log.Information("Successfully created playlist. Id: {PlaylistId}", newPlaylist.Id);
 
             return newPlaylist;
         }
 
         private async Task<PlaylistItem> AddVideoToPlaylistAsync(string videoId)
         {
-            Log.Information("Adding video (Id: {0}, Name: {2}) to playlist (Id: {1})", videoId, _playListId, _currentlyUploadingVideo.Name);
+            Log.Information("Adding video (Id: {VideoId}, Name: {VideoName}) to playlist (Id: {PlaylistId})", videoId,
+                _currentlyUploadingVideo.Name, _playListId);
             
             var newPlaylistItem = new PlaylistItem
             {
@@ -221,7 +222,7 @@ namespace WindowsHelper.Tasks
         private async Task<(IUploadProgress progress, Video video)> UploadAsync(string filePath, string description = null)
         {
             var title = Path.GetFileNameWithoutExtension(filePath);
-            Log.Information("Starting to upload\n Title: {0}\nDescription: {1}", title, description);
+            Log.Information("Starting to upload\n Title: {Title}\nDescription: {Description}", title, description);
             
             var video = new Video
             {
@@ -249,17 +250,19 @@ namespace WindowsHelper.Tasks
             switch (progress.Status)
             {
                 case UploadStatus.Uploading:
-                    Log.Information("{0} of {1} MB sent.", Utils.ToMb(progress.BytesSent), Utils.ToMb(_currentlyUploadingVideo.Length));
+                    Log.Information("{UploadedSize} of {FileSize} MB sent.", Utils.ToMb(progress.BytesSent),
+                        Utils.ToMb(_currentlyUploadingVideo.Length));
                     break;
                 case UploadStatus.Failed:
-                    Log.Error("An error prevented the upload of {1} from completing.\n{0}", progress.Exception, _currentlyUploadingVideo.Name);
+                    Log.Error("An error prevented the upload of {VideoName} from completing.\n{@Exception}",
+                        _currentlyUploadingVideo.Name, progress.Exception);
                     break;
             }
         }
 
         private void videosInsertRequest_ResponseReceived(Video video)
         {
-            Log.Information("Video id '{0}'({1}) was successfully uploaded.", video.Id, video.Snippet.Title);
+            Log.Information("Video id '{VideoId}'({Title}) was successfully uploaded.", video.Id, video.Snippet.Title);
             AddVideoToPlaylistAsync(video.Id).Wait();
         }
     }
