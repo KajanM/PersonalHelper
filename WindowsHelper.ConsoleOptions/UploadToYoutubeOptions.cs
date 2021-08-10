@@ -39,5 +39,8 @@ namespace WindowsHelper.ConsoleOptions
         
         [Option('s', "shutdown", Required = false, HelpText = "Shutdown once the process is completed.")]
         public bool DoShutDown { get; set; }
+        
+        [Option( "input-path", Required = false, HelpText = "Path of the text file containing which directories to upload.")]
+        public string BulkUploadInputPath { get; set; }
     }
 }
