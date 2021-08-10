@@ -44,7 +44,8 @@ namespace WindowsHelper.Tasks
             _options = GetOptionsFromMetaFileAsync(Path.Join(options.Path,
                            GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result
                        ?? options;
-
+            currentCredentialsIndex = _options.CredentialIndexToStartFrom;
+            
             _youtubeSettings = youtubeSettings;
             _notionSettings = notionSettings;
 
