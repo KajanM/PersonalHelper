@@ -90,7 +90,7 @@ namespace WindowsHelper.Tasks
 
             if (_options.DoShutDown)
             {
-                WindowsService.Shutdown();
+                WindowsService.Shutdown(5);
             }
 
             return 1;
