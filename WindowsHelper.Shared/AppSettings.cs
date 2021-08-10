@@ -1,4 +1,6 @@
-﻿namespace WindowsHelper.Shared
+﻿using System.Collections.Generic;
+
+namespace WindowsHelper.Shared
 {
     public class AppSettings
     {
@@ -11,11 +13,7 @@
 
     public class YoutubeSettings
     {
-        public YoutubeCredentials KeyPairOne { get; set; }
-        
-        public YoutubeCredentials KeyPairTwo { get; set; }
-        
-        public YoutubeCredentials KeyPairThree { get; set; }
+        public List<YoutubeCredentials> Credentials { get; set; }
     }
 
     public class YoutubeCredentials

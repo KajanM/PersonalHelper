@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Google;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Upload;
@@ -27,8 +28,9 @@ namespace WindowsHelper.Tasks
         private string _playListId;
         private string _playListTitle;
         private FileInfo _currentlyUploadingVideo;
+        private int currentCredentialsIndex;
         
-        private readonly YouTubeService _youtubeService;
+        private YouTubeService _youtubeService;
         private UploadToYoutubeOptions _options;
         private readonly YoutubeSettings _youtubeSettings;
         private readonly INotionService _notionService;
@@ -44,6 +46,13 @@ namespace WindowsHelper.Tasks
             _youtubeSettings = youtubeSettings;
             _notionSettings = notionSettings;
 
+            InitializeYoutubeService();
+
+            _notionService = new NotionService(_notionSettings);
+        }
+
+        private void InitializeYoutubeService()
+        {
             var credential = GetCredentialAsync().Result;
             _youtubeService = new YouTubeService(new BaseClientService.Initializer()
             {
@@ -51,20 +60,14 @@ namespace WindowsHelper.Tasks
                 ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
             });
             _youtubeService.HttpClient.Timeout = TimeSpan.FromMinutes(3);
-
-            _notionService = new NotionService(_notionSettings);
         }
-        
+
         public async Task<int> ExecuteAsync()
         {
             var currentDirectory = new DirectoryInfo(_options.Path);
             _playListTitle = currentDirectory.Name;
 
-            _playListId = _options.PlaylistId ?? (
-                _options.DoesPlaylistAlreadyExist
-                    ? FindPlaylist(_playListTitle).Id
-                    : CreatePlaylist(_playListTitle).Id
-            );
+            _playListId = GetPlaylistId();
 
             Task addToNotionTask = null;
             if (_options.ShouldAddEntryToNotion)
@@ -75,18 +78,33 @@ namespace WindowsHelper.Tasks
             var videosToUpload = currentDirectory.GetVideos().ToList();
             Log.Information("Found {VideosCount} videos to upload", videosToUpload.Count);
 
-            foreach (var videoToUpload in videosToUpload)
+            for (var i = 0; i < videosToUpload.Count; i++)
             {
+                var videoToUpload = videosToUpload[i];
+                
                 _currentlyUploadingVideo = videoToUpload;
                 try
                 {
                     var description = GetDescriptionAsync(Path.GetFileNameWithoutExtension(videoToUpload.Name)).Result;
                     var (uploadProgress, _) = await UploadAsync(videoToUpload.FullName, description);
-                    Log.Information("Upload status of {VideoName}: {UploadStatus}", videoToUpload.Name, uploadProgress.Status);
+                    Log.Information("Upload status of {VideoName}: {UploadStatus}", videoToUpload.Name,
+                        uploadProgress.Status);
+                }
+                catch (GoogleApiException e)
+                {
+                    Log.Error("An error occured while uploading {VideoName}. Exception:\n{@Exception}",
+                        videoToUpload.Name, e);
+                    
+                    if (e.ToString().Contains("quotaExceeded"))
+                    {
+                        BypassQuotaError();
+                        i -= 1; // let's try uploading current video again
+                    }
                 }
                 catch (Exception e)
                 {
-                    Log.Error("An error occured while uploading {VideoName}. Exception:\n{@Exception}", videoToUpload.Name, e);
+                    Log.Error("An error occured while uploading {VideoName}. Exception:\n{@Exception}",
+                        videoToUpload.Name, e);
                 }
             }
 
@@ -101,6 +119,44 @@ namespace WindowsHelper.Tasks
             }
             
             return 1;
+        }
+
+        private string GetPlaylistId()
+        {
+            if (!string.IsNullOrWhiteSpace(_options.PlaylistId)) return _options.PlaylistId;
+
+            try
+            {
+                return _options.DoesPlaylistAlreadyExist
+                    ? FindPlaylist(_playListTitle).Id
+                    : CreatePlaylist(_playListTitle).Id;
+            }
+            catch (GoogleApiException e)
+            {
+                Log.Error("An error occured while initializing playlist id. {@Exception}", e);
+                if (e.ToString().Contains("quotaExceeded"))
+                {
+                    BypassQuotaError();
+                    return GetPlaylistId();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("An error occured while initializing playlist id. {@Exception}", e);
+            }
+            Log.Warning("Unable to initialize playlist id");
+            return null;
+        }
+
+        private void BypassQuotaError()
+        {
+            currentCredentialsIndex += 1;
+            if (currentCredentialsIndex >= _youtubeSettings.Credentials.Count)
+                throw new ApplicationException($"Credential limit exceeded({currentCredentialsIndex})");
+            
+            Log.Information("Initializing Youtube service with credentials index {CredentialsIndex}",
+                currentCredentialsIndex);
+            InitializeYoutubeService();
         }
 
         private static async Task<UploadToYoutubeOptions> GetOptionsFromMetaFileAsync(string metaFilePath)
@@ -186,10 +242,16 @@ namespace WindowsHelper.Tasks
 
         private async Task<UserCredential> GetCredentialAsync()
         {
-            var credential = PickCredentialsFromSettings();
+            if (currentCredentialsIndex >= _youtubeSettings.Credentials.Count)
+            {
+                throw new ArgumentException(
+                    $"Tried to get {currentCredentialsIndex}, but only {_youtubeSettings.Credentials.Count} provided.");
+            }
+            
+            var credential = _youtubeSettings.Credentials[currentCredentialsIndex];
 
             if (string.IsNullOrWhiteSpace(credential?.ClientId))
-                throw new ArgumentNullException($"Youtube credentials not initialized for {_options.KeyPairToUse}");
+                throw new ArgumentNullException($"Youtube credentials not initialized for {currentCredentialsIndex}");
 
             return GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
@@ -201,23 +263,9 @@ namespace WindowsHelper.Tasks
                 "user",
                 CancellationToken.None,
                 new FileDataStore(Path.Join(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),
-                    _options.KeyPairToUse.ToString()))
+                    $"yt-keypair-{currentCredentialsIndex}"))
             ).Result;
         }
-
-        private YoutubeCredentials PickCredentialsFromSettings()
-        {
-            YoutubeCredentials credential = _options.KeyPairToUse switch
-            {
-                YoutubeKeyPair.KeyPairOne => _youtubeSettings.KeyPairOne,
-                YoutubeKeyPair.KeyPairTwo => _youtubeSettings.KeyPairTwo,
-                YoutubeKeyPair.KeyPairThree => _youtubeSettings.KeyPairThree,
-                _ => null
-            };
-
-            return credential;
-        }
-
 
         private async Task<(IUploadProgress progress, Video video)> UploadAsync(string filePath, string description = null)
         {
