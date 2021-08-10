@@ -40,10 +40,17 @@ namespace WindowsHelper.Tasks
         public UploadToYoutube(UploadToYoutubeOptions options, YoutubeSettings youtubeSettings,
             NotionSettings notionSettings)
         {
-            // take options from the meta file if exists
-            _options = GetOptionsFromMetaFileAsync(Path.Join(options.Path,
-                           GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result
-                       ?? options;
+            if (options.IsBulkUpload)
+            {
+                _options = options;
+            }
+            else
+            {
+                // take options from the meta file if exists
+                _options = GetOptionsFromMetaFileAsync(Path.Join(options.Path,
+                               GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result
+                           ?? options;
+            }
             currentCredentialsIndex = _options.CredentialIndexToStartFrom;
             
             _youtubeSettings = youtubeSettings;
@@ -72,6 +79,11 @@ namespace WindowsHelper.Tasks
             foreach (var directory in directoriesToUpload)
             {
                 Log.Information("Uploading videos from {DirectoryName}", directory.FullName);
+                if (_options.IsBulkUpload)
+                {
+                    _options = GetOptionsFromMetaFileAsync(Path.Join(directory.FullName,
+                        GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result;
+                }
                 _options.Path = directory.FullName;
                 await UploadVideosInDirectoryAsync(directory);
             }

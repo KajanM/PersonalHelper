@@ -43,6 +43,8 @@ namespace WindowsHelper.ConsoleOptions
         [Option( "input-path", Required = false, HelpText = "Path of the text file containing which directories to upload.")]
         public string BulkUploadInputPath { get; set; }
 
+        public bool IsBulkUpload => !string.IsNullOrWhiteSpace(BulkUploadInputPath);
+
         [Option( 'i', Required = false, HelpText = "Credential index to start from. Zero based.")]
         public int CredentialIndexToStartFrom { get; set; }
     }
