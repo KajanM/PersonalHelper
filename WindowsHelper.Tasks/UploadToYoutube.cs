@@ -139,7 +139,7 @@ namespace WindowsHelper.Tasks
                 try
                 {
                     var description = GetDescriptionAsync(Path.GetFileNameWithoutExtension(videoToUpload.Name)).Result;
-                    var (uploadProgress, _) = await UploadAsync(videoToUpload.FullName, description);
+                    var (uploadProgress, _) = UploadAsync(videoToUpload.FullName, description).Result;
                     Log.Information("Upload status of {VideoName}: {UploadStatus}", videoToUpload.Name,
                         uploadProgress.Status);
                 }
