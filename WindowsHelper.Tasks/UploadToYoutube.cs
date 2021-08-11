@@ -361,9 +361,7 @@ namespace WindowsHelper.Tasks
                         Utils.ToMb(_currentlyUploadingVideo.Length));
                     break;
                 case UploadStatus.Failed:
-                    Log.Error("An error prevented the upload of {VideoName} from completing.\n{@Exception}",
-                        _currentlyUploadingVideo.Name, progress.Exception);
-                    break;
+                    throw progress.Exception; // handled in calling logic
             }
         }
 
