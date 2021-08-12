@@ -20,6 +20,7 @@ namespace WindowsHelper.Tasks.Extensions
             
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(yamlNamingConvention)
+                .IgnoreUnmatchedProperties()
                 .Build();
             
             return deserializer.Deserialize<TOut>(yamlString);
