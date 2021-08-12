@@ -27,7 +27,7 @@ namespace WindowsHelper.Tasks
     {
         private FileInfo _currentlyUploadingVideo;
         private int currentCredentialsIndex;
-        private CurrentCourseDetails _courseDetails;
+        private CurrentCourseDetails _currentCourseDetails;
 
         private YouTubeService _youtubeService;
         private UploadToYoutubeOptions _options;
@@ -66,7 +66,7 @@ namespace WindowsHelper.Tasks
             foreach (var directory in directoriesToUpload)
             {
                 Log.Information("Uploading videos from {DirectoryName}", directory.FullName);
-                _courseDetails = new CurrentCourseDetails();
+                _currentCourseDetails = new CurrentCourseDetails();
                 if (_options.IsBulkUpload)
                 {
                     _options = GetOptionsFromMetaFileAsync(Path.Join(directory.FullName,
@@ -106,8 +106,8 @@ namespace WindowsHelper.Tasks
 
         private async Task UploadVideosInDirectoryAsync(DirectoryInfo directory)
         {
-            _courseDetails.PlaylistTitle = directory.Name;
-            _courseDetails.PlaylistId = GetPlaylistId();
+            _currentCourseDetails.PlaylistTitle = directory.Name;
+            _currentCourseDetails.PlaylistId = GetPlaylistId();
 
             Task addToNotionTask = null;
             if (_options.ShouldAddEntryToNotion)
@@ -161,8 +161,8 @@ namespace WindowsHelper.Tasks
             try
             {
                 return _options.DoesPlaylistAlreadyExist
-                    ? FindPlaylist(_courseDetails.PlaylistTitle).Id
-                    : CreatePlaylist(_courseDetails.PlaylistTitle).Id;
+                    ? FindPlaylist(_currentCourseDetails.PlaylistTitle).Id
+                    : CreatePlaylist(_currentCourseDetails.PlaylistTitle).Id;
             }
             catch (Exception e)
             {
@@ -198,7 +198,7 @@ namespace WindowsHelper.Tasks
 
         private async Task AddToNotionAsync()
         {
-            if (string.IsNullOrWhiteSpace(_courseDetails.PlaylistId))
+            if (string.IsNullOrWhiteSpace(_currentCourseDetails.PlaylistId))
             {
                 Log.Warning("Skipping adding entry to Notion since playlist-id is not initialized");
                 return;
@@ -207,8 +207,8 @@ namespace WindowsHelper.Tasks
             await _notionService.AddCourseEntryAsync(new AddNewCourseRequestBindingModel(
                 _notionSettings.CoursesDatabaseId,
                 _options.Url,
-                $"https://www.youtube.com/playlist?list={_courseDetails.PlaylistId}",
-                _courseDetails.PlaylistTitle
+                $"https://www.youtube.com/playlist?list={_currentCourseDetails.PlaylistId}",
+                _currentCourseDetails.PlaylistTitle
             ));
         }
 
@@ -255,13 +255,13 @@ namespace WindowsHelper.Tasks
         private async Task<PlaylistItem> AddVideoToPlaylistAsync(string videoId)
         {
             Log.Information("Adding video (Id: {VideoId}, Name: {VideoName}) to playlist (Id: {PlaylistId})", videoId,
-                _currentlyUploadingVideo.Name, _courseDetails.PlaylistId);
+                _currentlyUploadingVideo.Name, _currentCourseDetails.PlaylistId);
 
             var newPlaylistItem = new PlaylistItem
             {
                 Snippet = new PlaylistItemSnippet
                 {
-                    PlaylistId = _courseDetails.PlaylistId,
+                    PlaylistId = _currentCourseDetails.PlaylistId,
                     ResourceId = new ResourceId { Kind = "youtube#video", VideoId = videoId }
                 }
             };
@@ -272,7 +272,7 @@ namespace WindowsHelper.Tasks
             catch (Exception e)
             {
                 Log.Error("An error occured while adding video ({Id}, {Name}) to playlist {PlayListId}. Exception\n{@Exception}",
-                    videoId, _currentlyUploadingVideo.Name, _courseDetails.PlaylistId);
+                    videoId, _currentlyUploadingVideo.Name, _currentCourseDetails.PlaylistId);
                 if (IsQuotaExceeded(e))
                 {
                     BypassQuotaError();
