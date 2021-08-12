@@ -60,18 +60,7 @@ namespace WindowsHelper.Tasks
 
             _notionService = new NotionService(_notionSettings);
         }
-
-        private void InitializeYoutubeService()
-        {
-            var credential = GetCredentialAsync().Result;
-            _youtubeService = new YouTubeService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = credential,
-                ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
-            });
-            _youtubeService.HttpClient.Timeout = TimeSpan.FromMinutes(3);
-        }
-
+        
         public async Task<int> ExecuteAsync()
         {
             var directoriesToUpload = await GetDirectoriesToUploadAsync();
@@ -369,6 +358,17 @@ namespace WindowsHelper.Tasks
         {
             Log.Information("Video id '{VideoId}'({Title}) was successfully uploaded.", video.Id, video.Snippet.Title);
             AddVideoToPlaylistAsync(video.Id).Wait();
+        }
+
+        private void InitializeYoutubeService()
+        {
+            var credential = GetCredentialAsync().Result;
+            _youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
+            });
+            _youtubeService.HttpClient.Timeout = TimeSpan.FromMinutes(3);
         }
     }
 }
