@@ -25,10 +25,9 @@ namespace WindowsHelper.Tasks
 {
     public class UploadToYoutube
     {
-        private string _playListId;
-        private string _playListTitle;
         private FileInfo _currentlyUploadingVideo;
         private int currentCredentialsIndex;
+        private CurrentCourseDetails _courseDetails;
 
         private YouTubeService _youtubeService;
         private UploadToYoutubeOptions _options;
@@ -67,6 +66,7 @@ namespace WindowsHelper.Tasks
             foreach (var directory in directoriesToUpload)
             {
                 Log.Information("Uploading videos from {DirectoryName}", directory.FullName);
+                _courseDetails = new CurrentCourseDetails();
                 if (_options.IsBulkUpload)
                 {
                     _options = GetOptionsFromMetaFileAsync(Path.Join(directory.FullName,
@@ -106,9 +106,8 @@ namespace WindowsHelper.Tasks
 
         private async Task UploadVideosInDirectoryAsync(DirectoryInfo directory)
         {
-            _playListTitle = directory.Name;
-
-            _playListId = GetPlaylistId();
+            _courseDetails.PlaylistTitle = directory.Name;
+            _courseDetails.PlaylistId = GetPlaylistId();
 
             Task addToNotionTask = null;
             if (_options.ShouldAddEntryToNotion)
@@ -162,8 +161,8 @@ namespace WindowsHelper.Tasks
             try
             {
                 return _options.DoesPlaylistAlreadyExist
-                    ? FindPlaylist(_playListTitle).Id
-                    : CreatePlaylist(_playListTitle).Id;
+                    ? FindPlaylist(_courseDetails.PlaylistTitle).Id
+                    : CreatePlaylist(_courseDetails.PlaylistTitle).Id;
             }
             catch (Exception e)
             {
@@ -199,7 +198,7 @@ namespace WindowsHelper.Tasks
 
         private async Task AddToNotionAsync()
         {
-            if (string.IsNullOrWhiteSpace(_playListId))
+            if (string.IsNullOrWhiteSpace(_courseDetails.PlaylistId))
             {
                 Log.Warning("Skipping adding entry to Notion since playlist-id is not initialized");
                 return;
@@ -208,8 +207,8 @@ namespace WindowsHelper.Tasks
             await _notionService.AddCourseEntryAsync(new AddNewCourseRequestBindingModel(
                 _notionSettings.CoursesDatabaseId,
                 _options.Url,
-                $"https://www.youtube.com/playlist?list={_playListId}",
-                _playListTitle
+                $"https://www.youtube.com/playlist?list={_courseDetails.PlaylistId}",
+                _courseDetails.PlaylistTitle
             ));
         }
 
@@ -256,13 +255,13 @@ namespace WindowsHelper.Tasks
         private async Task<PlaylistItem> AddVideoToPlaylistAsync(string videoId)
         {
             Log.Information("Adding video (Id: {VideoId}, Name: {VideoName}) to playlist (Id: {PlaylistId})", videoId,
-                _currentlyUploadingVideo.Name, _playListId);
+                _currentlyUploadingVideo.Name, _courseDetails.PlaylistId);
 
             var newPlaylistItem = new PlaylistItem
             {
                 Snippet = new PlaylistItemSnippet
                 {
-                    PlaylistId = _playListId,
+                    PlaylistId = _courseDetails.PlaylistId,
                     ResourceId = new ResourceId { Kind = "youtube#video", VideoId = videoId }
                 }
             };
@@ -273,7 +272,7 @@ namespace WindowsHelper.Tasks
             catch (Exception e)
             {
                 Log.Error("An error occured while adding video ({Id}, {Name}) to playlist {PlayListId}. Exception\n{@Exception}",
-                    videoId, _currentlyUploadingVideo.Name, _playListId);
+                    videoId, _currentlyUploadingVideo.Name, _courseDetails.PlaylistId);
                 if (IsQuotaExceeded(e))
                 {
                     BypassQuotaError();
@@ -368,6 +367,12 @@ namespace WindowsHelper.Tasks
                 ApplicationName = Assembly.GetExecutingAssembly().GetName().Name
             });
             _youtubeService.HttpClient.Timeout = TimeSpan.FromMinutes(3);
+        }
+
+        class CurrentCourseDetails
+        {
+            public string PlaylistId { get; set; }
+            public string PlaylistTitle { get; set; }
         }
     }
 }
