@@ -57,7 +57,7 @@ namespace WindowsHelper.Tasks.Helpers
             var stopwatch = Stopwatch.StartNew();
             Log.Information($"Starting to compress {videoPathToCompress}");
             var commandResult = await Cli.Wrap("ffmpeg.exe")
-                .WithArguments(new []{"-i", videoPathToCompress, "-vcodec libx265", "-crf", crfValue.ToString(), outputFileName})
+                .WithArguments(new []{"-i", videoPathToCompress, "-vcodec", "libx265", "-crf", crfValue.ToString(), outputFileName})
                 .ExecuteBufferedAsync();
 
             Log.Information("Compressed {InputName} into {OutputName} in {Elapsed} minutes",
