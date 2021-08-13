@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using CliWrap;
@@ -53,11 +54,17 @@ namespace WindowsHelper.Tasks.Helpers
 
         public static async Task<BufferedCommandResult> CompressAsync(string videoPathToCompress, string outputFileName, int crfValue = 24)
         {
+            var stopwatch = Stopwatch.StartNew();
             Log.Information($"Starting to compress {videoPathToCompress}");
             var commandResult = await Cli.Wrap("ffmpeg.exe")
                 .WithArguments(new []{"-i", videoPathToCompress, "-vcodec libx265", "-crf", crfValue.ToString(), outputFileName})
                 .ExecuteBufferedAsync();
 
+            Log.Information("Compressed {InputName} into {OutputName} in {Elapsed} minutes",
+                videoPathToCompress,
+                outputFileName,
+                stopwatch.ElapsedMilliseconds / (1000 * 60));
+            
             return commandResult;
         }
     }
