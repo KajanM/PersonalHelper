@@ -17,7 +17,8 @@ namespace WindowsHelper.ConsoleApp
                     ReplaceInvalidCharsFromFileNameOptions,
                     JoinMultipleVideosFfmpegOptions,
                     UploadToYoutubeOptions,
-                    GenerateUploadMetaTemplateFileOptions
+                    GenerateUploadMetaTemplateFileOptions,
+                    CompressToH265Options
                 >(args)
                 .MapResult(
                     async (AppendNumberToFilesOptions opts) => new FileOrganizer(opts).PrependFileNamesWithNumber(),
@@ -28,6 +29,7 @@ namespace WindowsHelper.ConsoleApp
                     async (UploadToYoutubeOptions opts) => await new UploadToYoutube(opts,
                         Program.AppSettings.YoutubeSettings, Program.AppSettings.NotionSettings).ExecuteAsync(),
                     async (GenerateUploadMetaTemplateFileOptions opts) => await GenerateUploadMetaTemplateFile.ExecuteAsync(opts),
+                    async (CompressToH265Options opts) => await CompressToH265.ExecuteAsync(opts),
                     HandleParseErrorAsync);
         }
 

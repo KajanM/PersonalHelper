@@ -50,5 +50,15 @@ namespace WindowsHelper.Tasks.Helpers
 
             return commandResult;
         }
+
+        public static async Task<BufferedCommandResult> CompressAsync(string videoPathToCompress, string outputFileName, int crfValue = 24)
+        {
+            Log.Information($"Starting to compress {videoPathToCompress}");
+            var commandResult = await Cli.Wrap("ffmpeg.exe")
+                .WithArguments(new []{"-i", videoPathToCompress, "-vcodec libx265", "-crf", crfValue.ToString(), outputFileName})
+                .ExecuteBufferedAsync();
+
+            return commandResult;
+        }
     }
 }
