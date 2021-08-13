@@ -46,8 +46,6 @@ namespace WindowsHelper.Tasks
             {
                 Log.Error(e, "An error occured while compressing the videos.");
             }
-
-            Console.Read();
         }
 
         private static string GetOutputFilePath(string inputFilePath)
