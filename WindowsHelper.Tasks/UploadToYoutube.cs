@@ -35,6 +35,12 @@ namespace WindowsHelper.Tasks
         private readonly INotionService _notionService;
         private readonly NotionSettings _notionSettings;
 
+        private static readonly IReadOnlyCollection<string> TokenRelatedIssueIdentifiers = new List<string>
+        {
+            "quotaExceeded",
+            "invalid_grant"
+        };
+
         public UploadToYoutube(UploadToYoutubeOptions options, YoutubeSettings youtubeSettings,
             NotionSettings notionSettings)
         {
@@ -135,9 +141,9 @@ namespace WindowsHelper.Tasks
                     Log.Error("An error occured while uploading {VideoName}. Exception:\n{@Exception}",
                         videoToUpload.Name, e);
 
-                    if (IsQuotaExceeded(e))
+                    if (IsRelatedToCurrentCredentials(e))
                     {
-                        BypassQuotaError();
+                        BypassCredentialsError();
                         i -= 1; // let's try uploading current video again
                     }
                 }
@@ -149,9 +155,9 @@ namespace WindowsHelper.Tasks
             }
         }
 
-        private static bool IsQuotaExceeded(Exception exception)
+        private static bool IsRelatedToCurrentCredentials(Exception exception)
         {
-            return exception.ToString().Contains("quotaExceeded");
+            return TokenRelatedIssueIdentifiers.Any(identifier => exception.ToString().Contains(identifier));
         }
 
         private string GetPlaylistId()
@@ -167,9 +173,9 @@ namespace WindowsHelper.Tasks
             catch (Exception e)
             {
                 Log.Error("An error occured while initializing playlist id. {@Exception}", e);
-                if (IsQuotaExceeded(e))
+                if (IsRelatedToCurrentCredentials(e))
                 {
-                    BypassQuotaError();
+                    BypassCredentialsError();
                     return GetPlaylistId();
                 }
             }
@@ -178,7 +184,7 @@ namespace WindowsHelper.Tasks
             return null;
         }
 
-        private void BypassQuotaError()
+        private void BypassCredentialsError()
         {
             currentCredentialsIndex += 1;
             if (currentCredentialsIndex >= _youtubeSettings.Credentials.Count)
@@ -273,9 +279,9 @@ namespace WindowsHelper.Tasks
             {
                 Log.Error("An error occured while adding video ({Id}, {Name}) to playlist {PlayListId}. Exception\n{@Exception}",
                     videoId, _currentlyUploadingVideo.Name, _currentCourseDetails.PlaylistId);
-                if (IsQuotaExceeded(e))
+                if (IsRelatedToCurrentCredentials(e))
                 {
-                    BypassQuotaError();
+                    BypassCredentialsError();
                     return await AddVideoToPlaylistAsync(videoId); // try again
                 }
             }
