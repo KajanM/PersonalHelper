@@ -73,7 +73,7 @@ namespace WindowsHelper.Tasks
                         GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result;
                 }
                 _options.Path = directory.FullName;
-                await UploadVideosInDirectoryAsync(directory);
+                await ProcessVideosInDirectoryAsync(directory);
             }
 
             if (_options.DoShutDown)
@@ -104,7 +104,7 @@ namespace WindowsHelper.Tasks
             return directoriesToUpload;
         }
 
-        private async Task UploadVideosInDirectoryAsync(DirectoryInfo directory)
+        private async Task ProcessVideosInDirectoryAsync(DirectoryInfo directory)
         {
             _currentCourseDetails.PlaylistTitle = directory.Name;
             _currentCourseDetails.PlaylistId = GetPlaylistId();
