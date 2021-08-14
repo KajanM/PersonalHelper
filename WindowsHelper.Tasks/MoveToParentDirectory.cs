@@ -2,6 +2,7 @@
 using System.IO;
 using WindowsHelper.ConsoleOptions;
 using Serilog;
+using WindowsHelper.Tasks.Extensions;
 
 namespace WindowsHelper.Tasks
 {
@@ -29,7 +30,8 @@ namespace WindowsHelper.Tasks
             foreach (var subDirectory in directory.GetDirectories())
             {
                 directoryNumber += 1;
-                foreach (var file in subDirectory.GetFiles())
+                var files = _options.DoMoveOnlyVideos ? subDirectory.GetVideos() : subDirectory.GetFiles();
+                foreach (var file in files)
                 {
                     var moveToPath = Path.Join(_options.Path,
                         $"{directoryNumber}-{string.Join("_", file.Name.Split(Path.GetInvalidFileNameChars()))}");
