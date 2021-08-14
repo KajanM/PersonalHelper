@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks;
 using CommandLine;
 using Serilog;
+using WindowsHelper.Services.Windows;
 
 namespace WindowsHelper.ConsoleApp
 {
@@ -18,7 +19,8 @@ namespace WindowsHelper.ConsoleApp
                     JoinMultipleVideosFfmpegOptions,
                     UploadToYoutubeOptions,
                     GenerateUploadMetaTemplateFileOptions,
-                    CompressToH265Options
+                    CompressToH265Options,
+                    ShutdownOptions,
                 >(args)
                 .MapResult(
                     async (AppendNumberToFilesOptions opts) => new FileOrganizer(opts).PrependFileNamesWithNumber(),
@@ -30,6 +32,7 @@ namespace WindowsHelper.ConsoleApp
                         Program.AppSettings.YoutubeSettings, Program.AppSettings.NotionSettings).ExecuteAsync(),
                     async (GenerateUploadMetaTemplateFileOptions opts) => await GenerateUploadMetaTemplateFile.ExecuteAsync(opts),
                     async (CompressToH265Options opts) => await new CompressToH265(opts).ExecuteAsync(),
+                    async (ShutdownOptions opts) => WindowsService.Shutdown(opts.Minutes, opts.Hours, opts.Seconds),
                     HandleParseErrorAsync);
         }
 
