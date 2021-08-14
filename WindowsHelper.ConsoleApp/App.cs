@@ -29,7 +29,7 @@ namespace WindowsHelper.ConsoleApp
                     async (UploadToYoutubeOptions opts) => await new UploadToYoutube(opts,
                         Program.AppSettings.YoutubeSettings, Program.AppSettings.NotionSettings).ExecuteAsync(),
                     async (GenerateUploadMetaTemplateFileOptions opts) => await GenerateUploadMetaTemplateFile.ExecuteAsync(opts),
-                    async (CompressToH265Options opts) => await CompressToH265.ExecuteAsync(opts),
+                    async (CompressToH265Options opts) => await new CompressToH265(opts).ExecuteAsync(),
                     HandleParseErrorAsync);
         }
 
