@@ -135,6 +135,10 @@ namespace WindowsHelper.Tasks
                     var (uploadProgress, _) = UploadAsync(videoToUpload.FullName, description).Result;
                     Log.Information("Upload status of {VideoName}: {UploadStatus}", videoToUpload.Name,
                         uploadProgress.Status);
+                    if (uploadProgress.Status == UploadStatus.Completed)
+                    {
+                        MoveVideoToUploadedDirectory(videoToUpload.FullName);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -153,6 +157,13 @@ namespace WindowsHelper.Tasks
             {
                 await addToNotionTask;
             }
+        }
+
+        private static void MoveVideoToUploadedDirectory(string inputPath)
+        {
+            var outputPath = Path.Join(Path.GetDirectoryName(inputPath), "uploaded", Path.GetFileName(inputPath));
+            Log.Information("Moving {@InputPath} to {@OutputPath}", inputPath, outputPath);
+            File.Move(inputPath, outputPath);
         }
 
         private static bool IsRelatedToCurrentCredentials(Exception exception)
