@@ -77,6 +77,7 @@ namespace WindowsHelper.Tasks
                 {
                     _options = GetOptionsFromMetaFileAsync(Path.Join(directory.FullName,
                         GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result;
+                    _options ??= new UploadToYoutubeOptions();
                 }
                 _options.Path = directory.FullName;
                 await ProcessVideosInDirectoryAsync(directory);
