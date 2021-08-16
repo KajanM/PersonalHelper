@@ -71,7 +71,7 @@ namespace WindowsHelper.Tasks
             {
                 Log.Information("Removing {@ProcessedVideos} from the queue.", videoPathsToCompress);
                 videoPathsToCompress.ForEach(compressedPath => _videoPathsToCompressQueue.Remove(compressedPath));
-                ExecuteAsync(); // process remaining items from the queue
+                await ExecuteAsync(); // process remaining items from the queue
             }
         }
 
