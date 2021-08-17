@@ -9,7 +9,17 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="PuppeteerSharp" Version="5.0.0" />
       <PackageReference Include="Serilog" Version="2.10.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Udemy\JsScripts\ParseCourseDetailsFromUdemy.js">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Udemy\JsScripts\ParseCoursesFromRealDiscount.js">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

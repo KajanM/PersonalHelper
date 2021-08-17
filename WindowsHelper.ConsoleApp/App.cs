@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WindowsHelper.ConsoleOptions;
@@ -6,6 +6,7 @@ using WindowsHelper.Tasks;
 using CommandLine;
 using Serilog;
 using WindowsHelper.Services.Windows;
+using WindowsHelper.Tasks.Udemy;
 
 namespace WindowsHelper.ConsoleApp
 {
@@ -21,6 +22,7 @@ namespace WindowsHelper.ConsoleApp
                     GenerateUploadMetaTemplateFileOptions,
                     CompressToH265Options,
                     ShutdownOptions,
+                    CrawlUdemyCouponsOptions
                 >(args)
                 .MapResult(
                     async (AppendNumberToFilesOptions opts) => new FileOrganizer(opts).PrependFileNamesWithNumber(),
@@ -33,6 +35,7 @@ namespace WindowsHelper.ConsoleApp
                     async (GenerateUploadMetaTemplateFileOptions opts) => await GenerateUploadMetaTemplateFile.ExecuteAsync(opts),
                     async (CompressToH265Options opts) => await new CompressToH265(opts).ExecuteAsync(),
                     async (ShutdownOptions opts) => WindowsService.Shutdown(opts.Minutes, opts.Hours, opts.Seconds),
+                    async (CrawlUdemyCouponsOptions opts) => await new CrawlUdemyCoupons().ExecuteAsync(),
                     HandleParseErrorAsync);
         }
 
