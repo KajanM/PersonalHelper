@@ -14,6 +14,7 @@ using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using Serilog;
 using WindowsHelper.ConsoleOptions;
+using WindowsHelper.Services.Extensions;
 using WindowsHelper.Services.Notion;
 using WindowsHelper.Services.Notion.BindingModels;
 using WindowsHelper.Services.Windows;

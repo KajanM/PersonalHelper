@@ -1,7 +1,7 @@
 ﻿using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace WindowsHelper.Tasks.Extensions
+namespace WindowsHelper.Services.Extensions
 {
     public static class YamlExtensions
     {
