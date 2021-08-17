@@ -1,8 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Serilog;
+using WindowsHelper.Services.Extensions;
 
 namespace WindowsHelper.Services.Helpers
 {
@@ -26,6 +29,20 @@ namespace WindowsHelper.Services.Helpers
         public static float ElapsedInMinutes(this Stopwatch stopwatch)
         {
             return stopwatch.ElapsedMilliseconds / 60000;
+        }
+
+        public static async Task WriteToYamAsync<T>(string filePathWithName, T source) where T : class
+        {
+            try
+            {
+                var content = source.SerializeToYaml();
+                await File.WriteAllTextAsync($"{filePathWithName}-{DateTime.Now:hh-mm-dd-MM-yyyy}.yml", content);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "An error occured while writing to {FileName}.yml. Data: {@Data}",
+                    filePathWithName, source);
+            }
         }
     }
 }

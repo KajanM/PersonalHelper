@@ -22,7 +22,8 @@ namespace WindowsHelper.ConsoleApp
                     GenerateUploadMetaTemplateFileOptions,
                     CompressToH265Options,
                     ShutdownOptions,
-                    CrawlUdemyCouponsOptions
+                    CrawlUdemyCouponsOptions,
+                    GrabLinksFromLibgenOptions
                 >(args)
                 .MapResult(
                     async (AppendNumberToFilesOptions opts) => new FileOrganizer(opts).PrependFileNamesWithNumber(),
@@ -36,6 +37,7 @@ namespace WindowsHelper.ConsoleApp
                     async (CompressToH265Options opts) => await new CompressToH265(opts).ExecuteAsync(),
                     async (ShutdownOptions opts) => WindowsService.Shutdown(opts.Minutes, opts.Hours, opts.Seconds),
                     async (CrawlUdemyCouponsOptions opts) => await new CrawlUdemyCoupons().ExecuteAsync(),
+                    async (GrabLinksFromLibgenOptions opts) => await new GrabLinksFromLibgen().ExecuteAsync(opts),
                     HandleParseErrorAsync);
         }
 

@@ -117,6 +117,12 @@ namespace WindowsHelper.Tasks
             _currentCourseDetails.PlaylistTitle = directory.Name;
             _currentCourseDetails.PlaylistId = GetPlaylistId();
 
+            var uploadedDirectoryPath = Path.Join(directory.FullName, "uploaded");
+            if (!Directory.Exists(uploadedDirectoryPath))
+            {
+                Directory.CreateDirectory(uploadedDirectoryPath);
+            }
+
             Task addToNotionTask = null;
             if (_options.ShouldAddEntryToNotion)
             {
