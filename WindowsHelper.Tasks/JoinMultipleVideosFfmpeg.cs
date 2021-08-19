@@ -7,6 +7,7 @@ using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks.Extensions;
 using WindowsHelper.Tasks.Helpers;
 using Serilog;
+using WindowsHelper.Services.Extensions;
 
 namespace WindowsHelper.Tasks
 {

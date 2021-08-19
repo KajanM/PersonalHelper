@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WindowsHelper.Tasks.Helpers;
 using CliWrap.Buffered;
 using Serilog;
+using WindowsHelper.Services.Extensions;
 
 namespace WindowsHelper.Tasks.Extensions
 {
