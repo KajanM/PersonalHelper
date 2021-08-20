@@ -1,4 +1,6 @@
-﻿namespace WindowsHelper.Services.Libgen
+﻿using System.Collections.Generic;
+
+namespace WindowsHelper.Services.Libgen
 {
     public class LibgenSearchResultBindingModel
     {
@@ -10,7 +12,7 @@
         public string PageCount { get; set; }
         public string Language { get; set; }
         public string Extension { get; set; }
-        public string Mirror { get; set; }
-        public string DownloadUri { get; set; }
+        public string[] Mirrors { get; set; }
+        public List<string> DownloadUris { get; set; } = new();
     }
 }

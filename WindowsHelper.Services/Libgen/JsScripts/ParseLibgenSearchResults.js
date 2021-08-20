@@ -14,7 +14,10 @@
     const language = columns[6].textContent
     const size = columns[7].textContent
     const extension = columns[8].textContent
-    const mirror = columns[9].childNodes[0].href
+    const mirrors = [];
+    for (let j = 9; j <= 13; j++) {
+      mirrors.push(columns[j]?.childNodes[0]?.href)
+    }
 
     const bookData = {
       id,
@@ -25,7 +28,7 @@
       pageCount,
       language,
       extension,
-      mirror
+      mirrors
     }
     links.push(bookData)
   }

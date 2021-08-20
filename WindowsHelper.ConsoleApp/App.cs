@@ -23,7 +23,7 @@ namespace WindowsHelper.ConsoleApp
                     CompressToH265Options,
                     ShutdownOptions,
                     CrawlUdemyCouponsOptions,
-                    GrabLinksFromLibgenOptions,
+                    DownloadFromLibgenOptions,
                     AddToIdmQueueOptions
                 >(args)
                 .MapResult(
@@ -38,7 +38,7 @@ namespace WindowsHelper.ConsoleApp
                     async (CompressToH265Options opts) => await new CompressToH265(opts).ExecuteAsync(),
                     async (ShutdownOptions opts) => WindowsService.Shutdown(opts.Minutes, opts.Hours, opts.Seconds),
                     async (CrawlUdemyCouponsOptions opts) => await new CrawlUdemyCoupons().ExecuteAsync(),
-                    async (GrabLinksFromLibgenOptions opts) => await new GrabLinksFromLibgen().ExecuteAsync(opts),
+                    async (DownloadFromLibgenOptions opts) => await new DownloadFromLibgen().ExecuteAsync(opts),
                     async (AddToIdmQueueOptions opts) => AddToIdmQueue.ExecuteAsync(opts),
                     HandleParseErrorAsync);
         }
