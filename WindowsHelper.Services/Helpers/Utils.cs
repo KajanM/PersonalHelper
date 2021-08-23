@@ -44,5 +44,11 @@ namespace WindowsHelper.Services.Helpers
                     filePathWithName, source);
             }
         }
+
+        public static string GetFormattedFileName(string title, string extension)
+        {
+            title = title.Trim().ReplaceInvalidChars().Truncate(200);
+            return $"{title}.{extension}";
+        }
     }
 }
