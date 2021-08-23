@@ -16,7 +16,7 @@ namespace WindowsHelper.Tasks.Udemy
         private readonly Browser _browser;
         private readonly IRealDiscountCrawlingService _realDiscountService;
         private readonly IUdemyCrawlingService _udemyService;
-        private readonly List<UdemyCourseBindingModel> _courses;
+        private readonly Dictionary<string, UdemyCourseBindingModel> _courseByUri;
         private readonly List<RealDiscountCourseBindingModel> _coursesWithParsingError;
 
         public CrawlUdemyCoupons()
@@ -29,7 +29,7 @@ namespace WindowsHelper.Tasks.Udemy
             }).Result;
             _realDiscountService = new RealDiscountCrawlingService(_browser);
             _udemyService = new UdemyCrawlingService(_browser);
-            _courses = new List<UdemyCourseBindingModel>();
+            _courseByUri = new Dictionary<string, UdemyCourseBindingModel>();
             _coursesWithParsingError = new List<RealDiscountCourseBindingModel>();
         }
 
@@ -44,9 +44,13 @@ namespace WindowsHelper.Tasks.Udemy
                 {
                     var udemyUri =
                         await _realDiscountService.GetUdemyUriWithCouponAsync(courseDataFromRealDiscount.Link);
+                    var uriWithoutCoupon = new Uri(udemyUri).GetLeftPart(UriPartial.Path);
+
+                    if (_courseByUri.ContainsKey(uriWithoutCoupon)) continue;
+                    
                     var courseDetails = await _udemyService.GetCourseDetailsAsync(udemyUri);
 
-                    _courses.Add(courseDetails);
+                    _courseByUri.Add(uriWithoutCoupon, courseDetails);
 
                     Log.Information("Udemy URI: {URI}, CourseDetails: {@Details}", udemyUri, courseDetails);
                 }
@@ -58,7 +62,7 @@ namespace WindowsHelper.Tasks.Udemy
                 }
             }
 
-            await WriteToJsonAsync("udemy", _courses);
+            await WriteToJsonAsync("udemy", _courseByUri);
             if (_coursesWithParsingError.Any())
             {
                 await WriteToJsonAsync("errors", _coursesWithParsingError);
@@ -67,7 +71,7 @@ namespace WindowsHelper.Tasks.Udemy
             Log.Information("Process completed in {Elapsed} minutes.", stopwatch.ElapsedInMinutes());
             Log.Information("Found: {RealDiscountCouponCount}. Processed: {ProcessedCount}. Errors: {ErrorsCount}",
                 parsedCoursesFromRealDiscount.Count,
-                _courses.Count, _coursesWithParsingError.Count);
+                _courseByUri.Count, _coursesWithParsingError.Count);
         }
 
         private static async Task WriteToJsonAsync<T>(string filePrefix, T source)
