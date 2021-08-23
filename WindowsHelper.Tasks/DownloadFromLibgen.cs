@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using PuppeteerSharp;
@@ -49,6 +50,15 @@ namespace WindowsHelper.Tasks
 
                 foreach (var result in results)
                 {
+                    var filePath = Path.Join(options.Path, Utils.GetFormattedFileName(result.Title, result.Extension));
+                    
+                    // ignore if the file is already downloaded
+                    if (File.Exists(filePath))
+                    {
+                        Log.Information("Skipping {FullPath} since a file already exists", filePath);
+                        continue;
+                    }
+                    
                     foreach (var mirror in result.Mirrors)
                     {
                         try
@@ -60,7 +70,7 @@ namespace WindowsHelper.Tasks
                             try
                             {
                                 var ms = await _downloadService.DownloadFileAsync(downloadUri);
-                                await IFileService.WriteToFileAsync(ms, options.Path, result.Title, result.Extension);
+                                await IFileService.WriteToFileAsync(ms, filePath);
                                 break;
                             }
                             catch (Exception e)
