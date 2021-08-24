@@ -86,7 +86,7 @@ namespace WindowsHelper.Tasks
                 
                 if ((!doJoinAllVideos && isMaximumHourLimitReached) || isLastVideo)
                 { 
-                    var videoListTextFileName = $"{_options.OutputFileName}-{startCount}-{i + 1}.txt";
+                    var videoListTextFileName = $"{_options.OutputFileName}-{startCount:000}-{i + 1:000}.txt";
                     Log.Information($"Writing to {videoListTextFileName}");
                     await File.WriteAllLinesAsync(Path.Join(_options.Path, videoListTextFileName), fileNames);
                     
