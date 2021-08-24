@@ -34,7 +34,7 @@ namespace WindowsHelper.Tasks
                 foreach (var file in files)
                 {
                     var moveToPath = Path.Join(_options.Path,
-                        $"{directoryNumber}-{string.Join("_", file.Name.Split(Path.GetInvalidFileNameChars()))}");
+                        $"{directoryNumber:00}-{string.Join("_", file.Name.Split(Path.GetInvalidFileNameChars()))}");
 
                     if (_options.IsDryRun)
                     {
