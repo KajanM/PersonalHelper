@@ -18,7 +18,7 @@ namespace WindowsHelper.Services.Helpers
             return await File.ReadAllTextAsync(scriptPath);
         }
 
-        public static string SerializeObject<T>(T source)
+        public static string SerializeObject<T>(this T source)
         {
             return JsonConvert.SerializeObject(source, new JsonSerializerSettings
             {
