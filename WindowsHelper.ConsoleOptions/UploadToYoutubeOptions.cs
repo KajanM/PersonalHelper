@@ -47,5 +47,8 @@ namespace WindowsHelper.ConsoleOptions
 
         [Option( 'i', Required = false, HelpText = "Credential index to start from. Zero based.")]
         public int CredentialIndexToStartFrom { get; set; }
+
+        [Option('p', Required = false, HelpText = "The profile name. Defaults to 'kajan'.")]
+        public string Profile { get; set; } = "kajan";
     }
 }

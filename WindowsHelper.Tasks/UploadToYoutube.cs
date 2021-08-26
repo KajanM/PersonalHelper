@@ -332,8 +332,7 @@ namespace WindowsHelper.Tasks
                 new[] { YouTubeService.Scope.Youtube, YouTubeService.Scope.YoutubeUpload },
                 "user",
                 CancellationToken.None,
-                new FileDataStore(Path.Join(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),
-                    $"yt-keypair-{currentCredentialsIndex}"))
+                new FileDataStore(GoogleTokenHelper.GetTokenDirectoryPath(_options.Profile, currentCredentialsIndex))
             ).Result;
         }
 
