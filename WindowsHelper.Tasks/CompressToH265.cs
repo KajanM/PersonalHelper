@@ -14,6 +14,7 @@ namespace WindowsHelper.Tasks
     {
         private readonly CompressToH265Options _options;
         private const string OutputDirectory = "compressed";
+        private const string ProcessedDirectory = "processed";
         private readonly List<string> _videoPathsToCompressQueue;
 
         public CompressToH265(CompressToH265Options options)
@@ -24,10 +25,18 @@ namespace WindowsHelper.Tasks
             #region Create output directory if not exist
 
             var outputDirectoryAbsolutePath = Path.Join(directory.FullName, OutputDirectory);
-            if (!File.Exists(outputDirectoryAbsolutePath))
+            if (!Directory.Exists(outputDirectoryAbsolutePath))
             {
                 Log.Information("Creating the output directory at {OutputDirectoryPath}", outputDirectoryAbsolutePath);
                 Directory.CreateDirectory(outputDirectoryAbsolutePath);
+            }
+
+            var processedDirectoryAbsolutePath = Path.Join(directory.FullName, OutputDirectory);
+            if (!Directory.Exists(processedDirectoryAbsolutePath))
+            {
+                Log.Information("Creating the processed directory at {ProcessedDirectoryPath}",
+                    processedDirectoryAbsolutePath);
+                Directory.CreateDirectory(processedDirectoryAbsolutePath);
             }
 
             #endregion
@@ -53,10 +62,8 @@ namespace WindowsHelper.Tasks
 
             Log.Information("Processing {@VideosToCompress} from the queue.", videoPathsToCompress);
             var compressTasks = videoPathsToCompress
-                .Select(async path => await FfmpegCommandHelper.CompressAsync(path,
-                    GetOutputFilePath(path),
-                    _options.CrfValue
-                ))
+                .Select(path => Task.Run(async () =>
+                    await FfmpegCommandHelper.CompressAsync(path, GetOutputFilePath(path), _options.CrfValue)))
                 .ToList();
 
             var allTasks = Task.WhenAll(compressTasks);
@@ -76,10 +83,10 @@ namespace WindowsHelper.Tasks
                     _videoPathsToCompressQueue.Remove(compressedPath);
                     try
                     {
-                        Log.Information("Video duration: {Duration}",
-                            FfmpegCommandHelper.GetMediaDurationAsync(compressedPath).Result.seconds);
-                        Log.Information("Deleting {Path}", compressedPath);
-                        File.Delete(compressedPath);
+                       
+                        var moveToPath = GetProcessedFilePath(compressedPath);
+                        Log.Information("Moving {Path} to {MoveToPath}", compressedPath, moveToPath);
+                        File.Move(compressedPath, moveToPath);
                     }
                     catch (Exception e)
                     {
@@ -88,6 +95,11 @@ namespace WindowsHelper.Tasks
                 });
                 await ExecuteAsync(); // process remaining items from the queue
             }
+        }
+
+        private static string GetProcessedFilePath(string inputFilePath)
+        {
+            return Path.Join(Path.GetDirectoryName(inputFilePath), ProcessedDirectory, Path.GetFileName(inputFilePath));
         }
 
         private static string GetOutputFilePath(string inputFilePath)

@@ -64,6 +64,15 @@ namespace WindowsHelper.Tasks.Helpers
                 videoPathToCompress,
                 outputFileName,
                 stopwatch.ElapsedMilliseconds / (1000 * 60));
+
+            var (inputDuration, _) = await GetMediaDurationAsync(videoPathToCompress);
+            var (outputDuration, _) = await GetMediaDurationAsync(outputFileName);
+            if (inputDuration != outputDuration)
+            {
+                Log.Error(
+                    "Input duration ({inputDuration}s [{InputPath}]) does not match the output duration({outputDuration}s [{OutputPath}])",
+                    inputDuration, videoPathToCompress, outputDuration, outputFileName);
+            }
             
             return commandResult;
         }
