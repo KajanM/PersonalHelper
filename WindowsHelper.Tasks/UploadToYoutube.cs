@@ -32,6 +32,7 @@ namespace WindowsHelper.Tasks
 
         private YouTubeService _youtubeService;
         private UploadToYoutubeOptions _options;
+        private readonly bool _isBulkUpload;
         private readonly YoutubeSettings _youtubeSettings;
         private readonly INotionService _notionService;
         private readonly NotionSettings _notionSettings;
@@ -48,6 +49,7 @@ namespace WindowsHelper.Tasks
             if (options.IsBulkUpload)
             {
                 _options = options;
+                _isBulkUpload = true;
             }
             else
             {
@@ -74,7 +76,7 @@ namespace WindowsHelper.Tasks
             {
                 Log.Information("Uploading videos from {DirectoryName}", directory.FullName);
                 _currentCourseDetails = new CurrentCourseDetails();
-                if (_options.IsBulkUpload)
+                if (_isBulkUpload)
                 {
                     _options = GetOptionsFromMetaFileAsync(Path.Join(directory.FullName,
                         GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result;
