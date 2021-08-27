@@ -8,9 +8,11 @@ namespace WindowsHelper.Services.Extensions
     {
         public static string ReplaceInvalidChars(this string @this, string replaceByChar = "-")
         {
-            return Regex
+            var replaced = Regex
                 .Replace(Path.GetFileNameWithoutExtension(@this), @"[^A-Za-z0-9]+", replaceByChar)
                 .ToLower();
+            
+            return $"{replaced[^1]}" == replaceByChar ? replaced[..^1] : replaced;
         }
         /// <summary>
         /// Truncates string so that it is no longer than the specified number of characters.
