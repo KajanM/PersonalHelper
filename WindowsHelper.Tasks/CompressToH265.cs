@@ -20,9 +20,9 @@ namespace WindowsHelper.Tasks
         {
             _options = options;
             var directory = new DirectoryInfo(_options.Path);
-            
+
             #region Create output directory if not exist
-            
+
             var outputDirectoryAbsolutePath = Path.Join(directory.FullName, OutputDirectory);
             if (!File.Exists(outputDirectoryAbsolutePath))
             {
@@ -31,12 +31,13 @@ namespace WindowsHelper.Tasks
             }
 
             #endregion
-            
+
             _videoPathsToCompressQueue = directory.GetVideos()
-                .Select(video => video.FullName)
-                .Where(path => !File.Exists(GetOutputFilePath(path)))
+                .Where(file => !File.Exists(GetOutputFilePath(file.FullName)))
+                .OrderBy(file => file.Length)
+                .Select(file => file.FullName)
                 .ToList();
-            
+
             Log.Information("Found {Count} videos to compress", _videoPathsToCompressQueue.Count);
         }
 
@@ -46,7 +47,7 @@ namespace WindowsHelper.Tasks
             {
                 Log.Information("All videos from the queue are processed.");
                 return;
-            };
+            }
 
             var videoPathsToCompress = _videoPathsToCompressQueue.Take(_options.ParallelCount).ToList();
 
@@ -70,7 +71,21 @@ namespace WindowsHelper.Tasks
             finally
             {
                 Log.Information("Removing {@ProcessedVideos} from the queue.", videoPathsToCompress);
-                videoPathsToCompress.ForEach(compressedPath => _videoPathsToCompressQueue.Remove(compressedPath));
+                videoPathsToCompress.ForEach(compressedPath =>
+                {
+                    _videoPathsToCompressQueue.Remove(compressedPath);
+                    try
+                    {
+                        Log.Information("Video duration: {Duration}",
+                            FfmpegCommandHelper.GetMediaDurationAsync(compressedPath).Result.seconds);
+                        Log.Information("Deleting {Path}", compressedPath);
+                        File.Delete(compressedPath);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e, "An error occured while handling the compressed file");
+                    }
+                });
                 await ExecuteAsync(); // process remaining items from the queue
             }
         }
