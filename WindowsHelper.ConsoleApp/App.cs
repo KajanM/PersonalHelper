@@ -27,7 +27,8 @@ namespace WindowsHelper.ConsoleApp
                     AddToIdmQueueOptions,
                     RefreshGoogleTokenOptions,
                     UpdateFreshCouponsRepoOptions,
-                    ExtractZipOptions
+                    ExtractZipOptions,
+                    AppendTextOptions
                 >(args)
                 .MapResult(
                     async (AppendNumberToFilesOptions opts) => new FileOrganizer(opts).PrependFileNamesWithNumber(),
@@ -46,6 +47,7 @@ namespace WindowsHelper.ConsoleApp
                     async (RefreshGoogleTokenOptions opts) => new RefreshGoogleTokens(opts, Program.AppSettings.YoutubeSettings).Execute(),
                     async (UpdateFreshCouponsRepoOptions opts) => await UpdateFreshCouponsRepo.ExecuteAsync(opts),
                     async (ExtractZipOptions opts) => ExtractZip.Execute(opts),
+                    async (AppendTextOptions opts) => await AppendText.ExecuteAsync(opts),
                     HandleParseErrorAsync);
         }
 
