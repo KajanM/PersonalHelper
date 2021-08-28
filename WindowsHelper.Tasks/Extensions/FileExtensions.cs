@@ -12,10 +12,10 @@ namespace WindowsHelper.Tasks.Extensions
 {
     public static class FileExtensions
     {
-        public static void RenameByReplacingSpecialChars(this DirectoryInfo directory, bool isDryRun,
+        public static void RenameByReplacingSpecialChars(this DirectoryInfo directory, bool isDryRun, bool doChangeToLower = true,
             string replaceByChar = "-")
         {
-            var nameExcludingTheIgnoredChars = directory.Name.ReplaceInvalidChars(replaceByChar);
+            var nameExcludingTheIgnoredChars = directory.Name.ReplaceInvalidChars(doChangeToLower, replaceByChar);
 
             var newName = directory.FullName.Replace(directory.Name, $"{nameExcludingTheIgnoredChars}");
 
@@ -38,9 +38,9 @@ namespace WindowsHelper.Tasks.Extensions
             }
         }
         
-        public static void RenameByReplacingSpecialChars(this FileInfo file, bool isDryRun, string replaceByChar = "-")
+        public static void RenameByReplacingSpecialChars(this FileInfo file, bool isDryRun, bool doChangeToLower = true, string replaceByChar = "-")
         {
-            var nameExcludingTheIgnoredChars = file.Name.ReplaceInvalidChars(replaceByChar);
+            var nameExcludingTheIgnoredChars = file.Name.ReplaceInvalidChars(doChangeToLower, replaceByChar);
 
             var newName = file.FullName.Replace(file.Name, $"{nameExcludingTheIgnoredChars}{file.Extension}");
 

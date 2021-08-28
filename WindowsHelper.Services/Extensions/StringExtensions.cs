@@ -6,11 +6,14 @@ namespace WindowsHelper.Services.Extensions
 {
     public static class StringExtensions
     {
-        public static string ReplaceInvalidChars(this string @this, string replaceByChar = "-")
+        public static string ReplaceInvalidChars(this string @this, bool doChangeToLower = true, string replaceByChar = "-")
         {
             var replaced = Regex
-                .Replace(Path.GetFileNameWithoutExtension(@this), @"[^A-Za-z0-9]+", replaceByChar)
-                .ToLower();
+                .Replace(Path.GetFileNameWithoutExtension(@this), @"[^A-Za-z0-9]+", replaceByChar);
+            if (doChangeToLower)
+            {
+                replaced = replaced.ToLower();
+            }
             
             return $"{replaced[^1]}" == replaceByChar ? replaced[..^1] : replaced;
         }

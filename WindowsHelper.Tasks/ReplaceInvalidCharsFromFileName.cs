@@ -14,7 +14,7 @@ namespace WindowsHelper.Tasks
 
             foreach (var file in directory.GetFiles("*", SearchOption.AllDirectories))
             {
-                file.RenameByReplacingSpecialChars(options.IsDryRun);
+                file.RenameByReplacingSpecialChars(options.IsDryRun, !options.DoNotChangeToLower);
             }
             
             foreach (var subDirectory in directory.GetDirectories("*", SearchOption.AllDirectories))

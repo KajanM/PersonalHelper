@@ -11,5 +11,8 @@ namespace WindowsHelper.ConsoleOptions
         
         [Option('d', "dry", Required = false, HelpText = "Prints the expected change without really affecting the file system")]
         public bool IsDryRun { get; set; }
+
+        [Option('l', "lower", Default = false, Required = false, HelpText = "Should not use lower case?")]
+        public bool DoNotChangeToLower { get; set; } 
     }
 }

@@ -23,7 +23,7 @@ namespace WindowsHelper.Services.Download
                 extension = Path.GetExtension(url.Split("?")[0]);
             }
 
-            var formattedName = $"{title.ReplaceInvalidChars(" ").Trim().Truncate(200)}{extension}";
+            var formattedName = $"{title.ReplaceInvalidChars(true, " ").Trim().Truncate(200)}{extension}";
             Log.Information("Adding {Url} to the IDM download queue with name {FileName}", url, formattedName);
 
             var commandResult = await Cli.Wrap("idman")
