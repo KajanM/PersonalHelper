@@ -12,18 +12,10 @@ namespace WindowsHelper.Tasks
     {
         public static void Execute(ExtractZipOptions options)
         {
-            ProcessDirectory(options.Path);
-        }
-
-        private static void ProcessDirectory(string directoryPath)
-        {
-            ProcessDirectory(new DirectoryInfo(directoryPath));
-        }
-        
-        private static void ProcessDirectory(DirectoryInfo directory)
-        {
+            var directory = new DirectoryInfo(options.Path);
+            
             Log.Information("Processing {DirectoryPath}", directory.FullName);
-            var zipFiles = directory.GetFiles().Where(file => file.Extension == ".zip").ToList();
+            var zipFiles = directory.GetFiles(".zip", SearchOption.AllDirectories).ToList();
             Log.Information("Found {Count} zip file(s)", zipFiles.Count);
             
             foreach (var zipFile in zipFiles)
@@ -38,11 +30,6 @@ namespace WindowsHelper.Tasks
                 {
                     Log.Error(e, "Unable to extract {SourceFile}", zipFile.FullName);
                 }
-            }
-
-            foreach (var subDirectory in directory.GetDirectories())
-            {
-               ProcessDirectory(subDirectory); 
             }
         }
     }
