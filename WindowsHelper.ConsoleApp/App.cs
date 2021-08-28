@@ -34,7 +34,7 @@ namespace WindowsHelper.ConsoleApp
                     async (AppendNumberToFilesOptions opts) => new FileOrganizer(opts).PrependFileNamesWithNumber(),
                     async (ChangeSystemTimeOptions opts) => await WindowsTimeService.ExecuteAsync(opts),
                     async (MoveToParentDirectoryOptions opts) => new MoveToParentDirectory(opts).Move(),
-                    async (ReplaceInvalidCharsFromFileNameOptions opts) => new ReplaceInvalidCharsFromFileName(opts).Replace(),
+                    async (ReplaceInvalidCharsFromFileNameOptions opts) => ReplaceInvalidCharsFromFileName.Execute(opts),
                     async (JoinMultipleVideosFfmpegOptions opts) => await new JoinMultipleVideosFfmpeg(opts).JoinAsync(),
                     async (UploadToYoutubeOptions opts) => await new UploadToYoutube(opts,
                         Program.AppSettings.YoutubeSettings, Program.AppSettings.NotionSettings).ExecuteAsync(),

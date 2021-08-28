@@ -12,9 +12,35 @@ namespace WindowsHelper.Tasks.Extensions
 {
     public static class FileExtensions
     {
+        public static void RenameByReplacingSpecialChars(this DirectoryInfo directory, bool isDryRun,
+            string replaceByChar = "-")
+        {
+            var nameExcludingTheIgnoredChars = directory.Name.ReplaceInvalidChars(replaceByChar);
+
+            var newName = directory.FullName.Replace(directory.Name, $"{nameExcludingTheIgnoredChars}");
+
+            if (newName == directory.FullName)
+            {
+                Log.Information("____Ignore");
+                return;
+            }
+
+            Log.Information($"From: {directory.FullName}{Environment.NewLine}To: {newName}{Environment.NewLine}");
+            if (isDryRun) return;
+
+            try
+            {
+                Directory.Move(directory.FullName, newName);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unable to rename {Source} to {Destination}", directory.FullName, newName);
+            }
+        }
+        
         public static void RenameByReplacingSpecialChars(this FileInfo file, bool isDryRun, string replaceByChar = "-")
         {
-            var nameExcludingTheIgnoredChars = file.Name.ReplaceInvalidChars();
+            var nameExcludingTheIgnoredChars = file.Name.ReplaceInvalidChars(replaceByChar);
 
             var newName = file.FullName.Replace(file.Name, $"{nameExcludingTheIgnoredChars}{file.Extension}");
 
@@ -27,7 +53,14 @@ namespace WindowsHelper.Tasks.Extensions
             Log.Information($"From: {file.FullName}{Environment.NewLine}To: {newName}{Environment.NewLine}");
             if (isDryRun) return;
 
-            File.Move(file.FullName, newName);
+            try
+            {
+                File.Move(file.FullName, newName);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unable to rename {Source} to {Destination}", file.FullName, newName);
+            }
         }
 
         public static async Task<(int seconds, BufferedCommandResult cmdResult)> GetMediaDurationAsync(this FileInfo file)

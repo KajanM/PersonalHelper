@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System;
+using CommandLine;
 
 namespace WindowsHelper.ConsoleOptions
 {
@@ -6,7 +7,7 @@ namespace WindowsHelper.ConsoleOptions
     public class ReplaceInvalidCharsFromFileNameOptions
     {
         [Option('p', "path", Required = false, HelpText = "Path to perform action")]
-        public string Path { get; set; } 
+        public string Path { get; set; } = Environment.CurrentDirectory;
         
         [Option('d', "dry", Required = false, HelpText = "Prints the expected change without really affecting the file system")]
         public bool IsDryRun { get; set; }

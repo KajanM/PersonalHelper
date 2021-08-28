@@ -5,24 +5,21 @@ using WindowsHelper.Tasks.Extensions;
 
 namespace WindowsHelper.Tasks
 {
-    public class ReplaceInvalidCharsFromFileName
+    public static class ReplaceInvalidCharsFromFileName
     {
-        private readonly ReplaceInvalidCharsFromFileNameOptions _options;
-
-        public ReplaceInvalidCharsFromFileName(ReplaceInvalidCharsFromFileNameOptions options)
+        public static void Execute(ReplaceInvalidCharsFromFileNameOptions options)
         {
-            _options = options;
-            _options.Path ??= Environment.CurrentDirectory;
-        }
-
-        public void Replace()
-        {
-            var directory = new DirectoryInfo(_options.Path);
+            var directory = new DirectoryInfo(options.Path);
             if (!directory.Exists) throw new ArgumentException("Invalid path");
 
-            foreach (var file in directory.GetFiles())
+            foreach (var file in directory.GetFiles("*", SearchOption.AllDirectories))
             {
-                file.RenameByReplacingSpecialChars(_options.IsDryRun);
+                file.RenameByReplacingSpecialChars(options.IsDryRun);
+            }
+            
+            foreach (var subDirectory in directory.GetDirectories("*", SearchOption.AllDirectories))
+            {
+               subDirectory.RenameByReplacingSpecialChars(options.IsDryRun);
             }
         }
     }
