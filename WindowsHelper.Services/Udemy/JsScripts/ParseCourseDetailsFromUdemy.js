@@ -9,6 +9,7 @@
   const lastUpdated = document.querySelector('.last-update-date span:nth-of-type(2)').textContent.trim()
   const courseProviderRating = document.querySelector('[data-purpose="instructor-bio"] ul li .udlite-block-list-item-content').textContent
   const data = JSON.parse(document.querySelector('#schema_markup script').innerHTML)[0]
+  const category = document.head.querySelector('[property="udemy_com:category"]').content
   
   return {
     title: data.name,
@@ -24,6 +25,7 @@
     lastUpdated,
     courseProviderName: data.provider.name,
     courseProviderRating,
-    courseProviderUri: data.provider.sameAs
+    courseProviderUri: data.provider.sameAs,
+    category
   }
 }
