@@ -72,7 +72,7 @@ namespace WindowsHelper.ConsoleApp
                     WindowsService.Shutdown(opts.Minutes, opts.Hours, opts.Seconds);
                     return 0;
                 case CrawlUdemyCouponsOptions opts:
-                    await new CrawlUdemyCoupons().ExecuteAsync();
+                    new CrawlUdemyCoupons().ExecuteAsync().Wait();
                     return 0;
                 case DownloadFromLibgenOptions opts:
                     await new DownloadFromLibgen().ExecuteAsync(opts);
