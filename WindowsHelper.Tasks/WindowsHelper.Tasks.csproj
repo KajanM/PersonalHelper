@@ -22,4 +22,10 @@
       <PackageReference Include="YamlDotNet" Version="11.2.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="resources\icon.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

@@ -10,6 +10,41 @@ namespace WindowsHelper.Tasks.Helpers
 {
     public static class FfmpegCommandHelper
     {
+        public static (bool isSuccess, BufferedCommandResult commandResult) AddWatermark(string videoPath, string outputPath, string watermarkImagePath = null)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            Log.Information("Attempting to add watermark to {Video}", videoPath);
+
+            if (string.IsNullOrWhiteSpace(watermarkImagePath))
+            {
+                watermarkImagePath = Path.Join(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),
+                    "resources", "icon.png");
+            }
+
+            BufferedCommandResult commandResult = null;
+
+            try
+            {
+                commandResult = Cli.Wrap("ffmpeg.exe")
+                    .WithArguments(new[]
+                    {
+                        "-i", videoPath, "-i", watermarkImagePath, "-filter_complex", "overlay=x=main_w-48:y=main_h-48",
+                        outputPath
+                    })
+                    .ExecuteBufferedAsync().Task.Result;
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unable to add watermark to {Name}", videoPath);
+                return (false, commandResult);
+            }
+
+            Log.Information("Processed {VideoName} in {Time} minutes", videoPath,
+                stopwatch.ElapsedMilliseconds / (1000 * 60));
+
+            return (false, commandResult);
+        }
+        
         public static async Task<(int seconds, BufferedCommandResult cmdResult)> GetMediaDurationAsync(
             string filePathWithName)
         {

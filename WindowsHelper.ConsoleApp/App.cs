@@ -30,7 +30,8 @@ namespace WindowsHelper.ConsoleApp
                 typeof(RefreshGoogleTokenOptions),
                 typeof(UpdateFreshCouponsRepoOptions),
                 typeof(ExtractZipOptions),
-                typeof(AppendTextOptions)
+                typeof(AppendTextOptions),
+                typeof(AddWatermarkToVideoOptions)
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -90,6 +91,9 @@ namespace WindowsHelper.ConsoleApp
                     return 0;
                 case AppendTextOptions opts:
                     await AppendText.ExecuteAsync(opts);
+                    return 0;
+                case AddWatermarkToVideoOptions opts:
+                    AddWatermarkToVideo.Execute(opts);
                     return 0;
                 default:
                     return -1;
