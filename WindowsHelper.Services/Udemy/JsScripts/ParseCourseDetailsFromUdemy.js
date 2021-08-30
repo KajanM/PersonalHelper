@@ -26,6 +26,8 @@
     courseProviderName: data.provider.name,
     courseProviderRating,
     courseProviderUri: data.provider.sameAs,
-    category
+    category,
+    ratingCount: data.aggregateRating?.ratingCount || 0,
+    ratingValue: parseFloat(data.aggregateRating?.ratingValue || "0")
   }
 }

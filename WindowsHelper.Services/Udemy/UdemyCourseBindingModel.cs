@@ -18,6 +18,8 @@
         public string CourseProviderRating { get; set; }
         public string CourseProviderUri { get; set; }
         public string Category { get; set; }
+        public int RatingCount { get; set; }
+        public int RatingValue { get; set; }
 
         public bool IsValidCoupon => !string.IsNullOrWhiteSpace(DiscountPercentage);
     }
