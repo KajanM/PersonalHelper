@@ -32,15 +32,15 @@ namespace WindowsHelper.Tasks
             var fileToMove = coursesJsonFiles.First();
             MoveFileToRepoDirectory(options, fileToMove);
             await UpdateMetaFileAsync(options, fileToMove.FullName);
-            await AddChangesToGitAsync(options, fileToMove.Name);
+            AddChangesToGit(options, fileToMove.Name);
             if(options.IsDryRun) return;
-            await GitCommandLineHelper.CommitChangesAsync(options.RepoPath, $"add new coupons: {fileToMove.Name}");
-            await GitCommandLineHelper.PushChangesAsync(options.RepoPath);
+            GitCommandLineHelper.CommitChanges(options.RepoPath, $"add new coupons: {fileToMove.Name}");
+            GitCommandLineHelper.PushChanges(options.RepoPath);
         }
 
-        private static async Task AddChangesToGitAsync(UpdateFreshCouponsRepoOptions options, string fileName)
+        private static void AddChangesToGit(UpdateFreshCouponsRepoOptions options, string fileName)
         {
-            await GitCommandLineHelper.TrackFilesAsync(options.RepoPath, fileName, "meta.json");
+            GitCommandLineHelper.TrackFiles(options.RepoPath, fileName, "meta.json");
         }
 
         private static async Task UpdateMetaFileAsync(UpdateFreshCouponsRepoOptions options, string coursesJsonFullPath)

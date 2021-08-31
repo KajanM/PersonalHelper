@@ -1,60 +1,51 @@
 ﻿using System.Collections.Generic;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
-using CliWrap;
 using CliWrap.Buffered;
 using Serilog;
+using WindowsHelper.Services.Helpers.Http;
 
 namespace WindowsHelper.Services.Helpers
 {
-    public class GitCommandLineHelper
+    public static class GitCommandLineHelper
     {
-        public static async Task<BufferedCommandResult> TrackFilesAsync(string repositoryPath,
+        private const string GitExecutablePath = "git.exe";
+
+        public static BufferedCommandResult TrackFiles(string repositoryPath,
             params string[] filesToTrack)
         {
             Log.Information("Tracking changes to git. Files {Files}", filesToTrack);
-            
+
             var arguments = new List<string> { "add" };
             arguments.AddRange(filesToTrack);
 
-            var commandResult = await Cli.Wrap("git.exe")
-                .WithArguments(arguments)
-                .WithWorkingDirectory(repositoryPath)
-                .ExecuteBufferedAsync();
-
-            Log.Information(commandResult.StandardOutput);
-            Log.Error(commandResult.StandardError);
-
-            return commandResult;
+            return CliWrapperHelper.Execute(new CliWrapperOptions
+            {
+                ExecutablePath = GitExecutablePath,
+                Arguments = arguments,
+            });
         }
 
-        public static async Task<BufferedCommandResult> CommitChangesAsync(string repoPath, string message)
+        public static BufferedCommandResult CommitChanges(string repoPath, string message)
         {
             Log.Information("Committing changes with message {Message}", message);
-            var commandResult = await Cli.Wrap("git.exe")
-                .WithArguments(new[] { "commit", "-m", message })
-                .WithWorkingDirectory(repoPath)
-                .ExecuteBufferedAsync();
-
-            Log.Information(commandResult.StandardOutput);
-            Log.Error(commandResult.StandardError);
-
-            return commandResult;
+            return CliWrapperHelper.Execute(new CliWrapperOptions
+            {
+                ExecutablePath = GitExecutablePath,
+                Arguments = new[] { "commit", "-m", message },
+                WorkingDirectory = repoPath
+            });
         }
 
-        public static async Task<BufferedCommandResult> PushChangesAsync(string repoPath,
+        public static BufferedCommandResult PushChanges(string repoPath,
             string remoteName = "origin", string branchName = "master")
         {
             Log.Information("Pushing changes to {RemoteName} {BranchName}", remoteName, branchName);
-            var commandResult = await Cli.Wrap("git.exe")
-                .WithArguments(new[] { "push", remoteName, branchName })
-                .WithWorkingDirectory(repoPath)
-                .ExecuteBufferedAsync();
 
-            Log.Information(commandResult.StandardOutput);
-            Log.Error(commandResult.StandardError);
-
-            return commandResult;
+            return CliWrapperHelper.Execute(new CliWrapperOptions
+            {
+                ExecutablePath = GitExecutablePath,
+                Arguments = new[] { "push", remoteName, branchName },
+                WorkingDirectory = repoPath
+            });
         }
     }
 }
