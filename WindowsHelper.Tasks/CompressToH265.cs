@@ -31,7 +31,7 @@ namespace WindowsHelper.Tasks
                 Directory.CreateDirectory(outputDirectoryAbsolutePath);
             }
 
-            var processedDirectoryAbsolutePath = Path.Join(directory.FullName, OutputDirectory);
+            var processedDirectoryAbsolutePath = Path.Join(directory.FullName, ProcessedDirectory);
             if (!Directory.Exists(processedDirectoryAbsolutePath))
             {
                 Log.Information("Creating the processed directory at {ProcessedDirectoryPath}",
