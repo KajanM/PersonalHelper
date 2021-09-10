@@ -31,7 +31,8 @@ namespace WindowsHelper.ConsoleApp
                 typeof(UpdateFreshCouponsRepoOptions),
                 typeof(ExtractZipOptions),
                 typeof(AppendTextOptions),
-                typeof(AddWatermarkToVideoOptions)
+                typeof(AddWatermarkToVideoOptions),
+                typeof(RemoveStringFromNameOptions)
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -94,6 +95,9 @@ namespace WindowsHelper.ConsoleApp
                     return 0;
                 case AddWatermarkToVideoOptions opts:
                     AddWatermarkToVideo.Execute(opts);
+                    return 0;
+                case RemoveStringFromNameOptions opts:
+                    RemoveStringFromName.Execute(opts);
                     return 0;
                 default:
                     return -1;
