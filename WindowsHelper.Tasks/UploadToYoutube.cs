@@ -40,7 +40,8 @@ namespace WindowsHelper.Tasks
         private static readonly IReadOnlyCollection<string> TokenRelatedIssueIdentifiers = new List<string>
         {
             "quotaExceeded",
-            "invalid_grant"
+            "invalid_grant",
+            "usageLimits"
         };
 
         public UploadToYoutube(UploadToYoutubeOptions options, YoutubeSettings youtubeSettings,
