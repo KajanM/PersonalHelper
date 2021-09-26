@@ -18,6 +18,8 @@ namespace WindowsHelper.Shared
 
     public class GoogleProjectCredentials
     {
+        public string Mail { get; set; }
+        public string ProjectId { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
     }
