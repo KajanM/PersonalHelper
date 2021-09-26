@@ -12,6 +12,7 @@ using Google.Apis.Upload;
 using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
+using Newtonsoft.Json;
 using Serilog;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Services.Extensions;
@@ -37,6 +38,8 @@ namespace WindowsHelper.Tasks
         private readonly INotionService _notionService;
         private readonly NotionSettings _notionSettings;
 
+        private readonly string _lastRunMetadataFilePath;
+
         private static readonly IReadOnlyCollection<string> TokenRelatedIssueIdentifiers = new List<string>
         {
             "quotaExceeded",
@@ -47,6 +50,10 @@ namespace WindowsHelper.Tasks
         public UploadToYoutube(UploadToYoutubeOptions options, GoogleSettings googleSettings,
             NotionSettings notionSettings)
         {
+            _lastRunMetadataFilePath = Path.Join(
+                Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName),
+                "yt-last-run.json");
+            
             if (options.IsBulkUpload)
             {
                 _options = options;
@@ -71,28 +78,55 @@ namespace WindowsHelper.Tasks
         
         public async Task<int> ExecuteAsync()
         {
-            var directoriesToUpload = await GetDirectoriesToUploadAsync();
-
-            foreach (var directory in directoriesToUpload)
+            try
             {
-                Log.Information("Uploading videos from {DirectoryName}", directory.FullName);
-                _currentCourseDetails = new CurrentCourseDetails();
-                if (_isBulkUpload)
+                var directoriesToUpload = await GetDirectoriesToUploadAsync();
+
+                foreach (var directory in directoriesToUpload)
                 {
-                    _options = GetOptionsFromMetaFileAsync(Path.Join(directory.FullName,
-                        GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result;
-                    _options ??= new UploadToYoutubeOptions();
+                    Log.Information("Uploading videos from {DirectoryName}", directory.FullName);
+                    _currentCourseDetails = new CurrentCourseDetails();
+                    if (_isBulkUpload)
+                    {
+                        _options = GetOptionsFromMetaFileAsync(Path.Join(directory.FullName,
+                            GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result;
+                        _options ??= new UploadToYoutubeOptions();
+                    }
+
+                    _options.Path = directory.FullName;
+                    await ProcessVideosInDirectoryAsync(directory);
                 }
-                _options.Path = directory.FullName;
-                await ProcessVideosInDirectoryAsync(directory);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "An error occured while uploading to youtube");
             }
 
+            await SaveLastRunMetadataAsync();
+            
             if (_options.DoShutDown)
             {
                 WindowsService.Shutdown(5);
             }
 
             return 1;
+        }
+
+        private async Task SaveLastRunMetadataAsync()
+        {
+            try
+            {
+                var metadata = new LastRunMetaData
+                {
+                    CredentialIndex = currentCredentialsIndex
+                };
+
+                await File.WriteAllTextAsync(_lastRunMetadataFilePath, Services.Helpers.Utils.SerializeObject(metadata));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "An error occured while saving last run meta data");
+            }
         }
 
         private async Task<IEnumerable<DirectoryInfo>> GetDirectoriesToUploadAsync()
@@ -387,6 +421,7 @@ namespace WindowsHelper.Tasks
 
         private void InitializeYoutubeService()
         {
+            InitializeCredentialIndexAsync();
             var credential = GetCredentialAsync().Result;
             _youtubeService = new YouTubeService(new BaseClientService.Initializer()
             {
@@ -396,10 +431,29 @@ namespace WindowsHelper.Tasks
             _youtubeService.HttpClient.Timeout = TimeSpan.FromMinutes(3);
         }
 
+        private void InitializeCredentialIndexAsync()
+        {
+            if (!File.Exists(_lastRunMetadataFilePath))
+            {
+                return;
+            }
+
+            var metadata = JsonConvert.DeserializeObject<LastRunMetaData>(File.ReadAllText(_lastRunMetadataFilePath));
+            Log.Information("Parsed last run metadata {@MetaData}", metadata);
+            currentCredentialsIndex = metadata.CredentialIndex >= _googleSettings.Credentials.Count
+                ? 0
+                : metadata.CredentialIndex;
+        }
+
         class CurrentCourseDetails
         {
             public string PlaylistId { get; set; }
             public string PlaylistTitle { get; set; }
+        }
+
+        class LastRunMetaData
+        {
+            public int CredentialIndex { get; set; }
         }
     }
 }
