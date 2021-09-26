@@ -56,7 +56,7 @@ namespace WindowsHelper.ConsoleApp
             IConfiguration config = builder.Build();
             var appSettingsConfig = config.GetSection("App");
             AppSettings = appSettingsConfig.Get<AppSettings>();
-            AppSettings.YoutubeSettings = appSettingsConfig.GetSection("Youtube").Get<YoutubeSettings>();
+            AppSettings.GoogleSettings = appSettingsConfig.GetSection("Google").Get<GoogleSettings>();
             AppSettings.NotionSettings = appSettingsConfig.GetSection("Notion").Get<NotionSettings>();
             AppSettings.SentrySettings = appSettingsConfig.GetSection("Sentry").Get<SentrySettings>();
         }

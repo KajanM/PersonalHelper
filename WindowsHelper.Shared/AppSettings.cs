@@ -4,19 +4,19 @@ namespace WindowsHelper.Shared
 {
     public class AppSettings
     {
-        public YoutubeSettings YoutubeSettings { get; set; }
+        public GoogleSettings GoogleSettings { get; set; }
         
         public NotionSettings NotionSettings { get; set; }
 
         public SentrySettings SentrySettings { get; set; }
     }
 
-    public class YoutubeSettings
+    public class GoogleSettings
     {
-        public List<YoutubeCredentials> Credentials { get; set; }
+        public List<GoogleProjectCredentials> Credentials { get; set; }
     }
 
-    public class YoutubeCredentials
+    public class GoogleProjectCredentials
     {
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }

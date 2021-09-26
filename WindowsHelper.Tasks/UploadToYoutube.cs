@@ -33,7 +33,7 @@ namespace WindowsHelper.Tasks
         private YouTubeService _youtubeService;
         private UploadToYoutubeOptions _options;
         private readonly bool _isBulkUpload;
-        private readonly YoutubeSettings _youtubeSettings;
+        private readonly GoogleSettings _googleSettings;
         private readonly INotionService _notionService;
         private readonly NotionSettings _notionSettings;
 
@@ -44,7 +44,7 @@ namespace WindowsHelper.Tasks
             "usageLimits"
         };
 
-        public UploadToYoutube(UploadToYoutubeOptions options, YoutubeSettings youtubeSettings,
+        public UploadToYoutube(UploadToYoutubeOptions options, GoogleSettings googleSettings,
             NotionSettings notionSettings)
         {
             if (options.IsBulkUpload)
@@ -61,7 +61,7 @@ namespace WindowsHelper.Tasks
             }
             currentCredentialsIndex = _options.CredentialIndexToStartFrom;
             
-            _youtubeSettings = youtubeSettings;
+            _googleSettings = googleSettings;
             _notionSettings = notionSettings;
 
             InitializeYoutubeService();
@@ -209,7 +209,7 @@ namespace WindowsHelper.Tasks
         private void BypassCredentialsError()
         {
             currentCredentialsIndex += 1;
-            if (currentCredentialsIndex >= _youtubeSettings.Credentials.Count)
+            if (currentCredentialsIndex >= _googleSettings.Credentials.Count)
                 throw new ApplicationException($"Credential limit exceeded({currentCredentialsIndex})");
 
             Log.Information("Initializing Youtube service with credentials index {CredentialsIndex}",
@@ -313,13 +313,13 @@ namespace WindowsHelper.Tasks
 
         private async Task<UserCredential> GetCredentialAsync()
         {
-            if (currentCredentialsIndex >= _youtubeSettings.Credentials.Count)
+            if (currentCredentialsIndex >= _googleSettings.Credentials.Count)
             {
                 throw new ArgumentException(
-                    $"Tried to get {currentCredentialsIndex}, but only {_youtubeSettings.Credentials.Count} provided.");
+                    $"Tried to get {currentCredentialsIndex}, but only {_googleSettings.Credentials.Count} provided.");
             }
 
-            var credential = _youtubeSettings.Credentials[currentCredentialsIndex];
+            var credential = _googleSettings.Credentials[currentCredentialsIndex];
 
             if (string.IsNullOrWhiteSpace(credential?.ClientId))
                 throw new ArgumentNullException($"Youtube credentials not initialized for {currentCredentialsIndex}");
@@ -332,7 +332,7 @@ namespace WindowsHelper.Tasks
                     ClientId = credential.ClientId,
                     ClientSecret = credential.ClientSecret
                 },
-                new[] { YouTubeService.Scope.Youtube, YouTubeService.Scope.YoutubeUpload },
+                RefreshGoogleTokens.GoogleProjectScopes,
                 "user",
                 CancellationToken.None,
                 new FileDataStore(GoogleTokenHelper.GetTokenDirectoryPath(_options.Profile, currentCredentialsIndex))

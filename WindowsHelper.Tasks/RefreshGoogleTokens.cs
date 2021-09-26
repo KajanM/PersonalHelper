@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
 using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using Serilog;
@@ -16,17 +17,23 @@ namespace WindowsHelper.Tasks
     public class RefreshGoogleTokens
     {
         private readonly RefreshGoogleTokenOptions _options;
-        private readonly YoutubeSettings _youtubeSettings;
+        private readonly GoogleSettings _googleSettings;
+        public static readonly string[] GoogleProjectScopes =
+        {
+            YouTubeService.Scope.Youtube,
+            YouTubeService.Scope.YoutubeUpload,
+            DriveService.Scope.Drive
+        };
 
-        public RefreshGoogleTokens(RefreshGoogleTokenOptions options, YoutubeSettings youtubeSettings)
+        public RefreshGoogleTokens(RefreshGoogleTokenOptions options, GoogleSettings googleSettings)
         {
             _options = options;
-            _youtubeSettings = youtubeSettings;
+            _googleSettings = googleSettings;
         }
         
         public void Execute()
         {
-            _options.EndIndex ??= _youtubeSettings.Credentials.Count;
+            _options.EndIndex ??= _googleSettings.Credentials.Count;
             
             for (var i = _options.StartIndex; i < _options.EndIndex; i++)
             {
@@ -50,13 +57,13 @@ namespace WindowsHelper.Tasks
 
         private async Task<UserCredential> GetCredentialAsync(int currentCredentialsIndex, string credentialDirectoryPath)
         {
-            if (currentCredentialsIndex >= _youtubeSettings.Credentials.Count)
+            if (currentCredentialsIndex >= _googleSettings.Credentials.Count)
             {
                 throw new ArgumentException(
-                    $"Tried to get {currentCredentialsIndex}, but only {_youtubeSettings.Credentials.Count} provided.");
+                    $"Tried to get {currentCredentialsIndex}, but only {_googleSettings.Credentials.Count} provided.");
             }
 
-            var credential = _youtubeSettings.Credentials[currentCredentialsIndex];
+            var credential = _googleSettings.Credentials[currentCredentialsIndex];
 
             if (string.IsNullOrWhiteSpace(credential?.ClientId))
                 throw new ArgumentNullException($"Youtube credentials not initialized for {currentCredentialsIndex}");
@@ -69,7 +76,7 @@ namespace WindowsHelper.Tasks
                     ClientId = credential.ClientId,
                     ClientSecret = credential.ClientSecret
                 },
-                new[] { YouTubeService.Scope.Youtube, YouTubeService.Scope.YoutubeUpload },
+                GoogleProjectScopes,
                 "user",
                 CancellationToken.None,
                 new FileDataStore(credentialDirectoryPath)

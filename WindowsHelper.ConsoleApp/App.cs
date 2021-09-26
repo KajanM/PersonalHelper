@@ -32,7 +32,8 @@ namespace WindowsHelper.ConsoleApp
                 typeof(ExtractZipOptions),
                 typeof(AppendTextOptions),
                 typeof(AddWatermarkToVideoOptions),
-                typeof(RemoveStringFromNameOptions)
+                typeof(RemoveStringFromNameOptions),
+                typeof(DownloadFromGDriveOptions)
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -60,7 +61,7 @@ namespace WindowsHelper.ConsoleApp
                     await new JoinMultipleVideosFfmpeg(opts).JoinAsync();
                     return 0;
                 case UploadToYoutubeOptions opts:
-                    await new UploadToYoutube(opts, Program.AppSettings.YoutubeSettings,
+                    await new UploadToYoutube(opts, Program.AppSettings.GoogleSettings,
                         Program.AppSettings.NotionSettings).ExecuteAsync();
                     return 0;
                 case GenerateUploadMetaTemplateFileOptions opts:
@@ -82,7 +83,7 @@ namespace WindowsHelper.ConsoleApp
                     AddToIdmQueue.ExecuteAsync(opts);
                     return 0;
                 case RefreshGoogleTokenOptions opts:
-                    new RefreshGoogleTokens(opts, Program.AppSettings.YoutubeSettings).Execute();
+                    new RefreshGoogleTokens(opts, Program.AppSettings.GoogleSettings).Execute();
                     return 0;
                 case UpdateFreshCouponsRepoOptions opts:
                     await UpdateFreshCouponsRepo.ExecuteAsync(opts);
@@ -98,6 +99,9 @@ namespace WindowsHelper.ConsoleApp
                     return 0;
                 case RemoveStringFromNameOptions opts:
                     RemoveStringFromName.Execute(opts);
+                    return 0;
+                case DownloadFromGDriveOptions opts:
+                    await new DownloadFromGDrive(opts, Program.AppSettings.GoogleSettings).ExecuteAsync();
                     return 0;
                 default:
                     return -1;
