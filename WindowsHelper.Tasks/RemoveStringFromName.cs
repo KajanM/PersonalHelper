@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Serilog;
 using WindowsHelper.ConsoleOptions;
@@ -15,11 +16,20 @@ namespace WindowsHelper.Tasks
                 Log.Information("Creating processed directory at {Path}", processedDirectoryPath);
                 Directory.CreateDirectory(processedDirectoryPath);
             }
-            foreach (var file in new DirectoryInfo(options.Path).GetFiles())
+
+            var directory = new DirectoryInfo(options.Path);
+            foreach (var file in directory.GetFiles())
             {
                 var newPath = Path.Join(processedDirectoryPath, Regex.Replace(file.Name, options.Pattern, ""));
                 Log.Information("Copying {From} to {To}", file.FullName, newPath);
-                File.Copy(file.FullName, newPath);
+                File.Copy(file.FullName, newPath, false);
+            }
+
+            foreach (var subDirectory in directory.GetDirectories())
+            {
+                var newPath = Path.Join(processedDirectoryPath, Regex.Replace(subDirectory.Name, options.Pattern, ""));
+                Log.Information("Copying {From} to {To}", subDirectory.FullName, newPath);
+                Directory.Move(subDirectory.FullName, newPath);
             }
         }
     }
