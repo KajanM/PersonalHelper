@@ -45,8 +45,8 @@ namespace WindowsHelper.ConsoleOptions
 
         public bool IsBulkUpload => !string.IsNullOrWhiteSpace(BulkUploadInputPath);
 
-        [Option( 'i', Required = false, HelpText = "Credential index to start from. Zero based.")]
-        public int CredentialIndexToStartFrom { get; set; }
+        [Option( 'i', Required = false, HelpText = "Credential index to start from. Zero based. By default last used credential index will be used.")]
+        public int? CredentialIndexToStartFrom { get; set; }
 
         [Option('p', Required = false, HelpText = "The profile name. Defaults to 'kajan'.")]
         public string Profile { get; set; } = "kajan";

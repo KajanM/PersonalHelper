@@ -66,12 +66,12 @@ namespace WindowsHelper.Tasks
                                GenerateUploadMetaTemplateFileOptions.DefaultMetaFileName)).Result
                            ?? options;
             }
-            currentCredentialsIndex = _options.CredentialIndexToStartFrom;
+            // currentCredentialsIndex = _options.CredentialIndexToStartFrom;
             
             _googleSettings = googleSettings;
             _notionSettings = notionSettings;
 
-            InitializeYoutubeService();
+            InitializeYoutubeService(true);
 
             _notionService = new NotionService(_notionSettings);
         }
@@ -419,9 +419,20 @@ namespace WindowsHelper.Tasks
             AddVideoToPlaylistAsync(video.Id).Wait();
         }
 
-        private void InitializeYoutubeService()
+        private void InitializeYoutubeService(bool isFirstCall = false)
         {
-            InitializeCredentialIndexAsync();
+            if (isFirstCall)
+            {
+                if (_options.CredentialIndexToStartFrom.HasValue)
+                {
+                    currentCredentialsIndex = _options.CredentialIndexToStartFrom.Value;
+                }
+                else
+                {
+                    InitializeCredentialIndex();
+                }
+            }
+            
             var credential = GetCredentialAsync().Result;
             _youtubeService = new YouTubeService(new BaseClientService.Initializer()
             {
@@ -431,7 +442,7 @@ namespace WindowsHelper.Tasks
             _youtubeService.HttpClient.Timeout = TimeSpan.FromMinutes(3);
         }
 
-        private void InitializeCredentialIndexAsync()
+        private void InitializeCredentialIndex()
         {
             if (!File.Exists(_lastRunMetadataFilePath))
             {
