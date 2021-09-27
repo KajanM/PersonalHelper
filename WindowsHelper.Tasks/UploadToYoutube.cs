@@ -177,7 +177,7 @@ namespace WindowsHelper.Tasks
                 try
                 {
                     var description = GetDescriptionAsync(Path.GetFileNameWithoutExtension(videoToUpload.Name)).Result;
-                    var (uploadProgress, _) = UploadAsync(videoToUpload.FullName, description).Result;
+                    var (uploadProgress, _) = Upload(videoToUpload.FullName, description);
                     Log.Information("Upload status of {VideoName}: {UploadStatus}", videoToUpload.Name,
                         uploadProgress.Status);
                     if (uploadProgress.Status == UploadStatus.Completed)
@@ -373,7 +373,7 @@ namespace WindowsHelper.Tasks
             ).Result;
         }
 
-        private async Task<(IUploadProgress progress, Video video)> UploadAsync(string filePath,
+        private (IUploadProgress progress, Video video) Upload(string filePath,
             string description = null)
         {
             var title = Path.GetFileNameWithoutExtension(filePath);
@@ -392,12 +392,12 @@ namespace WindowsHelper.Tasks
                 }
             };
 
-            await using var fileStream = new FileStream(filePath, FileMode.Open);
+            using var fileStream = new FileStream(filePath, FileMode.Open);
             var videosInsertRequest = _youtubeService.Videos.Insert(video, "snippet,status", fileStream, "video/*");
             videosInsertRequest.ProgressChanged += videosInsertRequest_ProgressChanged;
             videosInsertRequest.ResponseReceived += videosInsertRequest_ResponseReceived;
 
-            return (videosInsertRequest.UploadAsync().Result, video);
+            return (videosInsertRequest.Upload(), video);
         }
 
         private void videosInsertRequest_ProgressChanged(IUploadProgress progress)
