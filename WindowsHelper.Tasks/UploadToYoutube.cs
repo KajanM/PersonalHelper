@@ -30,6 +30,7 @@ namespace WindowsHelper.Tasks
         private FileInfo _currentlyUploadingVideo;
         private int currentCredentialsIndex;
         private CurrentCourseDetails _currentCourseDetails;
+        private bool isCredentialsRotated = false;
 
         private YouTubeService _youtubeService;
         private UploadToYoutubeOptions _options;
@@ -349,8 +350,16 @@ namespace WindowsHelper.Tasks
         {
             if (currentCredentialsIndex >= _googleSettings.Credentials.Count)
             {
-                throw new ArgumentException(
-                    $"Tried to get {currentCredentialsIndex}, but only {_googleSettings.Credentials.Count} provided.");
+                if (!isCredentialsRotated)
+                {
+                    currentCredentialsIndex = 0;
+                    isCredentialsRotated = true;
+                }
+                else
+                {
+                    throw new ArgumentException(
+                        "All credentials exceeded the quota");
+                }
             }
 
             var credential = _googleSettings.Credentials[currentCredentialsIndex];
