@@ -22,7 +22,14 @@ namespace WindowsHelper.Tasks
             {
                 var newPath = Path.Join(processedDirectoryPath, Regex.Replace(file.Name, options.Pattern, ""));
                 Log.Information("Copying {From} to {To}", file.FullName, newPath);
-                File.Copy(file.FullName, newPath, false);
+                if (options.DoMove)
+                {
+                    File.Move(file.FullName, newPath, true);
+                }
+                else
+                {
+                    File.Copy(file.FullName, newPath, false);
+                }
             }
 
             foreach (var subDirectory in directory.GetDirectories())

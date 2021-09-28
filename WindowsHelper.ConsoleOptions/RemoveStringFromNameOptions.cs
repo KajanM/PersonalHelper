@@ -13,5 +13,8 @@ namespace WindowsHelper.ConsoleOptions
 
         [Option(Required = true, HelpText = "The pattern to replace")]
         public string Pattern { get; set; }
+
+        [Option(Required = false, Default = true, HelpText = "Should move the file instead of copying")]
+        public bool DoMove { get; set; } = false;
     }
 }
