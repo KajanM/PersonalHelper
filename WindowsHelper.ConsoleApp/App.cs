@@ -33,7 +33,8 @@ namespace WindowsHelper.ConsoleApp
                 typeof(AppendTextOptions),
                 typeof(AddWatermarkToVideoOptions),
                 typeof(RemoveStringFromNameOptions),
-                typeof(DownloadFromGDriveOptions)
+                typeof(DownloadFromGDriveOptions),
+                typeof(JoinVideosInInnerDirectoryAndMoveToParentDirectoryOptions),
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -102,6 +103,9 @@ namespace WindowsHelper.ConsoleApp
                     return 0;
                 case DownloadFromGDriveOptions opts:
                     await new DownloadFromGDrive(opts, Program.AppSettings.GoogleSettings).ExecuteAsync();
+                    return 0;
+                case JoinVideosInInnerDirectoryAndMoveToParentDirectoryOptions opts:
+                    JoinVideosInInnerDirectoryAndMoveToParentDirectory.Execute(opts);
                     return 0;
                 default:
                     return -1;

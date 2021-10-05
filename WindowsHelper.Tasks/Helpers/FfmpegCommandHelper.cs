@@ -70,7 +70,7 @@ namespace WindowsHelper.Tasks.Helpers
         }
 
         public static async Task<BufferedCommandResult> ConcatMediaAsync(string inputFileName, string outputFileName,
-            bool optionsIsDryRun)
+            string workingDirectoryPath, bool optionsIsDryRun)
         {
             Log.Information($"Joining based on {inputFileName}");
             Log.Information(await File.ReadAllTextAsync(inputFileName));
@@ -78,7 +78,8 @@ namespace WindowsHelper.Tasks.Helpers
             if (optionsIsDryRun) return null;
             
             var commandResult = Cli.Wrap("ffmpeg.exe")
-                .WithArguments($"-f concat -i {inputFileName} -c copy {outputFileName}")
+                .WithWorkingDirectory(workingDirectoryPath)
+                .WithArguments(new []{"-f", "concat", "-i", inputFileName, "-c", "copy", outputFileName})
                 .ExecuteBufferedAsync().Task.Result;
 
             Log.Information(commandResult.StandardOutput);
