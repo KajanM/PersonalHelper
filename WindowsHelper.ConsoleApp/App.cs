@@ -58,7 +58,7 @@ namespace WindowsHelper.ConsoleApp
                     ReplaceInvalidCharsFromFileName.Execute(opts);
                     return 0;
                 case JoinMultipleVideosFfmpegOptions opts:
-                    await new JoinMultipleVideosFfmpeg(opts).JoinAsync();
+                    await JoinMultipleVideosFfmpeg.JoinAsync(opts);
                     return 0;
                 case UploadToYoutubeOptions opts:
                     await new UploadToYoutube(opts, Program.AppSettings.GoogleSettings,

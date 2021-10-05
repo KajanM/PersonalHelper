@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System;
+using CommandLine;
 
 namespace WindowsHelper.ConsoleOptions
 {
@@ -6,7 +7,7 @@ namespace WindowsHelper.ConsoleOptions
     public class JoinMultipleVideosFfmpegOptions
     {
         [Option('p', "path", Required = false, HelpText = "Path to perform action. Defaults to the current directory")]
-        public string Path { get; set; }
+        public string Path { get; set; } = Environment.CurrentDirectory;
 
         [Option('o', "output-filename", Required = false, HelpText = "The output file name. Defaults to the parent directory name")]
         public string OutputFileName { get; set; }
