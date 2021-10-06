@@ -18,14 +18,14 @@ namespace WindowsHelper.Tasks
             }
 
             var directory = new DirectoryInfo(options.Path);
-            foreach (var subDirectory in directory.GetDirectories())
+            foreach (var subDirectory in directory.GetDirectories($"*{options.Pattern}*"))
             {
                 var newPath = Path.Join(processedDirectoryPath, Regex.Replace(subDirectory.Name, options.Pattern, ""));
                 Log.Information("Copying {From} to {To}", subDirectory.FullName, newPath);
                 Directory.Move(subDirectory.FullName, newPath);
             }
               
-            foreach (var file in directory.GetFiles())
+            foreach (var file in directory.GetFiles($"*{options.Pattern}*"))
             {
                 var newPath = Path.Join(processedDirectoryPath, Regex.Replace(file.Name, options.Pattern, ""));
                 Log.Information("Copying {From} to {To}", file.FullName, newPath);
