@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FFMpegCore;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks.Extensions;
 using WindowsHelper.Tasks.Helpers;
@@ -19,38 +20,30 @@ namespace WindowsHelper.Tasks
             options.OutputFileName ??= Path.GetFileName(options.Path).ReplaceInvalidChars();
             options.OutputExtension ??= DetermineOutputExtension(directory);
 
-            if (!options.IsFileListAlreadyExist)
-            {
-                await GenerateTextFilesToBeConsumedByFfmpegAsync(directory, options);
-            }
-
-            var videoJoinTasks = directory.GetFiles($"{options.OutputFileName}-*-*.txt")
-                .Select(ffmpegInputFile =>
-                    Task.Run(async () => await FfmpegCommandHelper.ConcatMediaAsync(Path.Join(options.Path, ffmpegInputFile.Name),
-                        Path.Join(options.Path, $"{Path.GetFileNameWithoutExtension(ffmpegInputFile.Name)}.{options.OutputExtension}"),
-                        options.Path, options.IsDryRun)))
-                .ToList();
-
-            var allTasks = Task.WhenAll(videoJoinTasks);
             try
             {
-                allTasks.Wait();
+                FFMpeg.Join(Path.Join(directory.FullName, $"{options.OutputFileName}.{options.OutputExtension}"),
+                    directory.GetVideos().Select(v => v.FullName).ToArray());
             }
             catch (Exception e)
             {
-                Log.Information($"An error occured while joining the videos.{Environment.NewLine}{e}");
+                Log.Error(e, "An error occured while joining videos using FFMpege wrapper {DirectoryPath}",
+                    directory.FullName);
             }
         }
 
         private static string DetermineOutputExtension(DirectoryInfo directory)
         {
             var video = directory.GetVideos().FirstOrDefault();
-            if(video == null) throw new InvalidOperationException("No video files found to automatically determine the output extension");
+            if (video == null)
+                throw new InvalidOperationException(
+                    "No video files found to automatically determine the output extension");
 
             return Path.GetExtension(video.Name)[1..];
         }
 
-        private static async Task GenerateTextFilesToBeConsumedByFfmpegAsync(DirectoryInfo directory, JoinMultipleVideosFfmpegOptions options)
+        private static async Task GenerateTextFilesToBeConsumedByFfmpegAsync(DirectoryInfo directory,
+            JoinMultipleVideosFfmpegOptions options)
         {
             var fileQuery = directory.GetVideos();
 
@@ -75,19 +68,18 @@ namespace WindowsHelper.Tasks
                 var doJoinAllVideos = options.MaximumHourLimit <= 0;
                 var isMaximumHourLimitReached = durationInSeconds >= options.MaximumHourLimit * 60 * 60;
                 var isLastVideo = i == allVideos.Count - 1;
-                
+
                 if ((!doJoinAllVideos && isMaximumHourLimitReached) || isLastVideo)
-                { 
+                {
                     var videoListTextFileName = $"{options.OutputFileName}-{startCount:000}-{i + 1:000}.txt";
                     Log.Information($"Writing to {videoListTextFileName}");
                     await File.WriteAllLinesAsync(Path.Join(options.Path, videoListTextFileName), fileNames);
-                    
+
                     startCount = i + 2;
                     fileNames.Clear();
                     durationInSeconds = 0;
                 }
             }
-
         }
     }
 }
