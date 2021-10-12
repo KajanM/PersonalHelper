@@ -20,15 +20,29 @@ namespace WindowsHelper.Tasks
             options.OutputFileName ??= Path.GetFileName(options.Path).ReplaceInvalidChars();
             options.OutputExtension ??= DetermineOutputExtension(directory);
 
-            try
+            if (!options.IsFileListAlreadyExist)
             {
-                FFMpeg.Join(Path.Join(directory.FullName, $"{options.OutputFileName}.{options.OutputExtension}"),
-                    directory.GetVideos().Select(v => v.FullName).ToArray());
+                await GenerateTextFilesToBeConsumedByFfmpegAsync(directory, options);
             }
-            catch (Exception e)
+
+            foreach (var file in directory.GetFiles($"{options.OutputFileName}-*-*.txt"))
             {
-                Log.Error(e, "An error occured while joining videos using FFMpeg wrapper {DirectoryPath}",
-                    directory.FullName);
+                try
+                {
+                    var videosToJoin = File.ReadAllLines(file.FullName)
+                        .Select(path => Path.Join(options.Path, path)).ToArray();
+                    Log.Information("Joining based on {Path} {@Content}", file.FullName, videosToJoin);
+
+                    FFMpeg.Join(
+                        Path.Join(options.Path,
+                            $"{Path.GetFileNameWithoutExtension(file.Name)}.{options.OutputExtension}"),
+                        videosToJoin);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "An error occured while joining videos using FFMpeg wrapper {DirectoryPath}",
+                        directory.FullName);
+                }
             }
         }
 
@@ -54,16 +68,16 @@ namespace WindowsHelper.Tasks
 
             // group videos such that the group duration meets the input maximum-hour-limit
             var allVideos = fileQuery.ToList();
-            var durationInSeconds = 0;
+            var durationInSeconds = 0.0;
             var fileNames = new List<string>();
             var startCount = 1;
 
             for (var i = 0; i < allVideos.Count; i++)
             {
                 var file = allVideos[i];
-                var mediaDurationResult = await file.GetMediaDurationAsync();
-                durationInSeconds += mediaDurationResult.seconds;
-                fileNames.Add($"file '{file.Name}'");
+                var mediaDurationResult = FFProbe.Analyse(file.FullName);
+                durationInSeconds += mediaDurationResult.Duration.TotalSeconds;
+                fileNames.Add(file.Name);
 
                 var doJoinAllVideos = options.MaximumHourLimit <= 0;
                 var isMaximumHourLimitReached = durationInSeconds >= options.MaximumHourLimit * 60 * 60;
