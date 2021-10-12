@@ -11,7 +11,8 @@ namespace WindowsHelper.Tasks
     {
         public static void Execute(RemoveStringFromNameOptions options)
         {
-            var processedDirectoryPath = Path.Join(options.Path, "processed");
+            var processedDirectoryPath =
+                options.IgnoreUseProcessedDirectory ? options.Path : Path.Join(options.Path, "processed");
             if (!Directory.Exists(processedDirectoryPath))
             {
                 Log.Information("Creating processed directory at {Path}", processedDirectoryPath);

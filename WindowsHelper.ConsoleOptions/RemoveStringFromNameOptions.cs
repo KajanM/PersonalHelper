@@ -14,6 +14,10 @@ namespace WindowsHelper.ConsoleOptions
         [Option(Required = true, HelpText = "The pattern to replace")]
         public string Pattern { get; set; }
 
+        [Option('i', "ignore-processed-dir", Required = false, Default = false,
+            HelpText = "Do not use separate processed directory")]
+        public bool IgnoreUseProcessedDirectory { get; set; }
+
         [Option(Required = false, Default = true, HelpText = "Should move the file instead of copying")]
         public bool DoMove { get; set; } = false;
     }
