@@ -35,6 +35,7 @@ namespace WindowsHelper.ConsoleApp
                 typeof(RemoveStringFromNameOptions),
                 typeof(DownloadFromGDriveOptions),
                 typeof(JoinVideosInInnerDirectoryAndMoveToParentDirectoryOptions),
+                typeof(AnalyzeVideosOptions),
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -108,6 +109,9 @@ namespace WindowsHelper.ConsoleApp
                         return 0;
                     case JoinVideosInInnerDirectoryAndMoveToParentDirectoryOptions opts:
                         JoinVideosInInnerDirectoryAndMoveToParentDirectory.Execute(opts);
+                        return 0;
+                    case AnalyzeVideosOptions opts:
+                        AnalyzeVideos.Execute(opts);
                         return 0;
                     default:
                         return -1;
