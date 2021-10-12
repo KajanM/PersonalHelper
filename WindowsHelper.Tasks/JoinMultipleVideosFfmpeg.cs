@@ -27,7 +27,7 @@ namespace WindowsHelper.Tasks
             }
             catch (Exception e)
             {
-                Log.Error(e, "An error occured while joining videos using FFMpege wrapper {DirectoryPath}",
+                Log.Error(e, "An error occured while joining videos using FFMpeg wrapper {DirectoryPath}",
                     directory.FullName);
             }
         }
