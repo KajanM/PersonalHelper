@@ -20,7 +20,7 @@ namespace WindowsHelper.Tasks
                 var joinOptions = new JoinMultipleVideosFfmpegOptions
                 {
                     Path = subDirectory.FullName,
-                    MaximumHourLimit = 5
+                    MaximumHourLimit = options.MaximumHourLimit
                 };
                 
                 try
