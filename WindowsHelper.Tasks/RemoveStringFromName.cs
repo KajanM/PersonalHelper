@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Serilog;
@@ -18,16 +19,24 @@ namespace WindowsHelper.Tasks
             }
 
             var directory = new DirectoryInfo(options.Path);
-            foreach (var subDirectory in directory.GetDirectories($"*{options.Pattern}*"))
+            foreach (var subDirectory in directory.GetDirectories().Where(d => Regex.Match(d.Name, options.Pattern).Success))
             {
                 var newPath = Path.Join(processedDirectoryPath, Regex.Replace(subDirectory.Name, options.Pattern, ""));
+                if (string.IsNullOrWhiteSpace(newPath))
+                {
+                    throw new ArgumentException(nameof(options.Pattern));
+                }
                 Log.Information("Copying {From} to {To}", subDirectory.FullName, newPath);
                 Directory.Move(subDirectory.FullName, newPath);
             }
               
-            foreach (var file in directory.GetFiles($"*{options.Pattern}*"))
+            foreach (var file in directory.GetFiles().Where(d => Regex.Match(d.Name, options.Pattern).Success))
             {
                 var newPath = Path.Join(processedDirectoryPath, Regex.Replace(file.Name, options.Pattern, ""));
+                if (string.IsNullOrWhiteSpace(Path.GetFileNameWithoutExtension(newPath)))
+                {
+                    throw new ArgumentException(nameof(options.Pattern));
+                }
                 Log.Information("Copying {From} to {To}", file.FullName, newPath);
                 if (options.DoMove)
                 {
