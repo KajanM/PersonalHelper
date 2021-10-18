@@ -22,6 +22,7 @@ namespace WindowsHelper.Tasks
                     Path = subDirectory.FullName,
                     MaximumHourLimit = options.MaximumHourLimit,
                     NumberSeparatorChar = options.NumberSeparatorChar,
+                    IsNumberAppended = options.IsNumberAppended,
                 };
                 
                 try

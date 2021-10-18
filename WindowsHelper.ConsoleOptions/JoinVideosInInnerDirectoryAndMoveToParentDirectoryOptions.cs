@@ -20,5 +20,9 @@ namespace WindowsHelper.ConsoleOptions
         [Option("separator", Required = false,
             HelpText = "Number separator char used in the file name. Defaults to '-'.")]
         public string NumberSeparatorChar { get; set; } = "-";
+
+        [Option('n', "is-number-appended", Required = false,
+            HelpText = "Number is appended to the file name. Used to order the files.")]
+        public bool IsNumberAppended { get; set; }
     }
 }
