@@ -44,7 +44,7 @@ namespace WindowsHelper.ConsoleApp
 
         static async Task<int> RunAsync(object options)
         {
-            Log.Debug("Options received {Options}", options);
+            Log.Information("Options received {@Options}", options);
 
             try
             {
