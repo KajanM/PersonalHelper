@@ -15,9 +15,9 @@ namespace WindowsHelper.ConsoleOptions
         [Option('i', "ignore-list-generation", Required = false, HelpText = "Does input files for ffmpeg already exist")]
         public bool IsFileListAlreadyExist { get; set; }
 
-        [Option('n', "is-number-appended", Required = false,
-            HelpText = "Number is appended to the file name. Used to order the files. Defaults to true")]
-        public bool IsNumberAppended { get; set; } = true;
+        [Option('n', "is-number-appended", Required = false, Default = false,
+            HelpText = "Number is appended to the file name. Used to order the files.")]
+        public bool IsNumberAppended { get; set; }
 
         [Option("separator", Required = false,
             HelpText = "Number separator char used in the file name. Defaults to '-'.")]
