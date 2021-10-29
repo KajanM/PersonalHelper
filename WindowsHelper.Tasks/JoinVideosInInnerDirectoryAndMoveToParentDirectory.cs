@@ -4,6 +4,7 @@ using System.Linq;
 using Serilog;
 using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Services.Extensions;
+using WindowsHelper.Tasks.Extensions;
 
 namespace WindowsHelper.Tasks
 {
@@ -24,6 +25,22 @@ namespace WindowsHelper.Tasks
                     NumberSeparatorChar = options.NumberSeparatorChar,
                     IsNumberAppended = options.IsNumberAppended,
                 };
+
+                var videos = subDirectory.GetVideos().ToList();
+                if (videos.Count == 0)
+                {
+                    Log.Information("No videos found at {Path}. Skipping", subDirectory.FullName);
+                    continue;
+                }
+
+                if (videos.Count == 1)
+                {
+                    Log.Information("Found only one video, just moving to parent directory");
+                    var video = videos.FirstOrDefault();
+                    var destinationPath = Path.Join(subDirectory.Parent.FullName, video.Name);
+                    Log.Information("Moving {Source} to {Destination}", video.FullName, destinationPath);
+                    File.Move(video.FullName, destinationPath);
+                }
                 
                 try
                 {
