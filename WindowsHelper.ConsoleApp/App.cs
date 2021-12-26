@@ -37,6 +37,7 @@ namespace WindowsHelper.ConsoleApp
                 typeof(JoinVideosInInnerDirectoryAndMoveToParentDirectoryOptions),
                 typeof(AnalyzeVideosOptions),
                 typeof(DeleteVideosInSubdirectoriesOptions),
+                typeof(AudioToVideoOptions),
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -116,6 +117,9 @@ namespace WindowsHelper.ConsoleApp
                         return 0;
                     case DeleteVideosInSubdirectoriesOptions opts:
                         DeleteVideosInSubdirectories.Execute(opts);
+                        return 0;
+                    case AudioToVideoOptions opts:
+                        AudioToVideo.Execute(opts);
                         return 0;
                     default:
                         return -1;
