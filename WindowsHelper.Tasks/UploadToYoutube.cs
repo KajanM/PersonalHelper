@@ -31,6 +31,11 @@ namespace WindowsHelper.Tasks
         private int currentCredentialsIndex;
         private CurrentCourseDetails _currentCourseDetails;
         private bool isCredentialsRotated = false;
+        private byte _currentInternetFailureRetryCount;
+        private VideosResource.InsertMediaUpload _currentUploadRequest;
+        
+        private const byte MaxInternetFailureRetryCount = 10;
+        private const int DefaultSleepTimeInMinutes = 2;
 
         private YouTubeService _youtubeService;
         private UploadToYoutubeOptions _options;
@@ -215,6 +220,11 @@ namespace WindowsHelper.Tasks
         private static bool IsRelatedToCurrentCredentials(Exception exception)
         {
             return TokenRelatedIssueIdentifiers.Any(identifier => exception.ToString().Contains(identifier));
+        }
+
+        private static bool IsRelatedToInternetFailure(Exception exception)
+        {
+            return exception.ToString().Contains("No such host is known");
         }
 
         private string GetPlaylistId()
@@ -402,11 +412,11 @@ namespace WindowsHelper.Tasks
             };
 
             using var fileStream = new FileStream(filePath, FileMode.Open);
-            var videosInsertRequest = _youtubeService.Videos.Insert(video, "snippet,status", fileStream, "video/*");
-            videosInsertRequest.ProgressChanged += videosInsertRequest_ProgressChanged;
-            videosInsertRequest.ResponseReceived += videosInsertRequest_ResponseReceived;
+            _currentUploadRequest = _youtubeService.Videos.Insert(video, "snippet,status", fileStream, "video/*");
+            _currentUploadRequest.ProgressChanged += videosInsertRequest_ProgressChanged;
+            _currentUploadRequest.ResponseReceived += videosInsertRequest_ResponseReceived;
 
-            return (videosInsertRequest.Upload(), video);
+            return (_currentUploadRequest.Upload(), video);
         }
 
         private void videosInsertRequest_ProgressChanged(IUploadProgress progress)
@@ -418,7 +428,20 @@ namespace WindowsHelper.Tasks
                         Utils.ToMb(_currentlyUploadingVideo.Length));
                     break;
                 case UploadStatus.Failed:
-                    throw progress.Exception; // handled in calling logic
+                    if (!IsRelatedToInternetFailure(progress.Exception)) throw progress.Exception; // handled in calling logic
+                    
+                    if (_currentInternetFailureRetryCount >= MaxInternetFailureRetryCount)
+                    {
+                        Log.Error("Maximum internet failure retry reached({CurrentRetryCount})", _currentInternetFailureRetryCount);
+                        throw progress.Exception; // handled in calling logic
+                    }
+                    _currentInternetFailureRetryCount += 1;
+                    Log.Warning("{ErrorMessage}. Sleeping for {DefaultSleepTime} minutes", progress.Exception.Message,
+                        DefaultSleepTimeInMinutes);
+                    Thread.Sleep(DefaultSleepTimeInMinutes * 60 * 1000);
+                    Log.Warning("Resuming upload");
+                    _currentUploadRequest.Resume();
+                    break;
             }
         }
 
