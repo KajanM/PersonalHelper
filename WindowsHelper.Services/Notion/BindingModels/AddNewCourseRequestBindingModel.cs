@@ -71,6 +71,31 @@ namespace WindowsHelper.Services.Notion.BindingModels
     
             [JsonPropertyName("Name")]
             public Name Name { get; set; }
+
+            [JsonPropertyName("Type")]
+            public Type Type { get; set; }
+        }
+
+        public class Type
+        {
+            public Type(string name)
+            {
+                Select = new Select(name);
+            }
+            
+            [JsonPropertyName("select")]
+            public Select Select { get; set; } 
+        }
+
+        public class Select
+        {
+            public Select(string name)
+            {
+                Name = name;
+            }
+            
+            [JsonPropertyName("name")]
+            public string Name { get; set; }
         }
     
         public class AddNewCourseRequestBindingModel
@@ -86,7 +111,8 @@ namespace WindowsHelper.Services.Notion.BindingModels
                 {
                     Url = new Url(courseUrl),
                     DownloadUrl = new DownloadUrl(downloadUrl),
-                    Name = new Name(title)
+                    Name = new Name(title),
+                    Type = new Type("course")
                 };
             }
             
