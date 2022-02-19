@@ -9,6 +9,8 @@ namespace WindowsHelper.Shared
         public NotionSettings NotionSettings { get; set; }
 
         public SentrySettings SentrySettings { get; set; }
+        
+        public TspProjectSettings TspProjectSettings { get; set; } 
     }
 
     public class GoogleSettings
@@ -34,5 +36,10 @@ namespace WindowsHelper.Shared
     public class SentrySettings
     {
         public string Dsn { get; set; }
+    }
+
+    public class TspProjectSettings
+    {
+        public string ProjectRoot { get; set; }
     }
 }

@@ -5,7 +5,9 @@ using WindowsHelper.ConsoleOptions;
 using WindowsHelper.Tasks;
 using CommandLine;
 using Serilog;
+using WindowsHelper.ConsoleOptions.Generators.Tsp;
 using WindowsHelper.Services.Windows;
+using WindowsHelper.Tasks.Generators.Tsp;
 using WindowsHelper.Tasks.Udemy;
 
 namespace WindowsHelper.ConsoleApp
@@ -38,6 +40,7 @@ namespace WindowsHelper.ConsoleApp
                 typeof(AnalyzeVideosOptions),
                 typeof(DeleteVideosInSubdirectoriesOptions),
                 typeof(AudioToVideoOptions),
+                typeof(GenerateRepositoryOptions)
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -120,6 +123,9 @@ namespace WindowsHelper.ConsoleApp
                         return 0;
                     case AudioToVideoOptions opts:
                         AudioToVideo.Execute(opts);
+                        return 0;
+                    case GenerateRepositoryOptions opts:
+                        GenerateRepository.ExecuteAsync(opts, Program.AppSettings.TspProjectSettings).Wait();
                         return 0;
                     default:
                         return -1;

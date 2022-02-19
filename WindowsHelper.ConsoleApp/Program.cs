@@ -59,6 +59,7 @@ namespace WindowsHelper.ConsoleApp
             AppSettings.GoogleSettings = appSettingsConfig.GetSection("Google").Get<GoogleSettings>();
             AppSettings.NotionSettings = appSettingsConfig.GetSection("Notion").Get<NotionSettings>();
             AppSettings.SentrySettings = appSettingsConfig.GetSection("Sentry").Get<SentrySettings>();
+            AppSettings.TspProjectSettings = appSettingsConfig.GetSection("TspProject").Get<TspProjectSettings>();
         }
     }
 }
