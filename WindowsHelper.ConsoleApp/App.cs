@@ -40,7 +40,8 @@ namespace WindowsHelper.ConsoleApp
                 typeof(AnalyzeVideosOptions),
                 typeof(DeleteVideosInSubdirectoriesOptions),
                 typeof(AudioToVideoOptions),
-                typeof(GenerateRepositoryOptions)
+                typeof(GenerateRepositoryOptions),
+                typeof(GenerateTspDeploymentArtifactOptions),
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -126,6 +127,9 @@ namespace WindowsHelper.ConsoleApp
                         return 0;
                     case GenerateRepositoryOptions opts:
                         GenerateRepository.ExecuteAsync(opts, Program.AppSettings.TspProjectSettings).Wait();
+                        return 0;
+                    case GenerateTspDeploymentArtifactOptions opts:
+                        GenerateTspDeploymentArtifact.Execute(opts, Program.AppSettings.TspProjectSettings);
                         return 0;
                     default:
                         return -1;

@@ -41,5 +41,11 @@ namespace WindowsHelper.Shared
     public class TspProjectSettings
     {
         public string ProjectRoot { get; set; }
+        
+        public string UatSettingsPath { get; set; }
+
+        public string ProdSettingsPath { get; set; }
+        
+        public string DeploymentArtifactDirectory { get; set; }
     }
 }
