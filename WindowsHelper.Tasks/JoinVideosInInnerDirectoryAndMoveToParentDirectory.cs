@@ -36,8 +36,8 @@ namespace WindowsHelper.Tasks
                 if (videos.Count == 1)
                 {
                     Log.Information("Found only one video, just moving to parent directory");
-                    var video = videos.FirstOrDefault();
-                    var destinationPath = Path.Join(subDirectory.Parent.FullName, video.Name);
+                    var video = videos.First();
+                    var destinationPath = Path.Join(subDirectory.Parent.FullName, $"{subDirectory.Name.ReplaceInvalidChars()}.{video.Extension}");
                     Log.Information("Moving {Source} to {Destination}", video.FullName, destinationPath);
                     File.Move(video.FullName, destinationPath);
                 }
