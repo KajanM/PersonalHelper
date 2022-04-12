@@ -42,6 +42,7 @@ namespace WindowsHelper.ConsoleApp
                 typeof(AudioToVideoOptions),
                 typeof(GenerateRepositoryOptions),
                 typeof(GenerateTspDeploymentArtifactOptions),
+                typeof(AlterDbOptions),
             };
             var result = Parser.Default.ParseArguments(args, types);
             result.MapResult(async (object opts) => await RunAsync(opts),HandleParseErrorAsync);
@@ -130,6 +131,9 @@ namespace WindowsHelper.ConsoleApp
                         return 0;
                     case GenerateTspDeploymentArtifactOptions opts:
                         GenerateTspDeploymentArtifact.Execute(opts, Program.AppSettings.TspProjectSettings);
+                        return 0;
+                    case AlterDbOptions opts:
+                        await AlterDb.ExecuteAsync(opts);
                         return 0;
                     default:
                         return -1;
