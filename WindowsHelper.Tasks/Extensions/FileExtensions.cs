@@ -73,7 +73,7 @@ namespace WindowsHelper.Tasks.Extensions
             var videoExtensions =
                 new List<string>
                     {
-                        "mp4", "mov", "wmv", "ts", "avi", "webm", "m4v"
+                        "mp4", "mov", "wmv", "ts", "avi", "webm", "m4v", "mkv"
                     }
                     .Select(e => $".{e}").ToList();
             
